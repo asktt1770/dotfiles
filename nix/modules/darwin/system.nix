@@ -169,7 +169,7 @@ in
       "aqua-voice"
       "arc"
       "blackhole-16ch"
-      "blu-ray-player-pro"
+      "brave-browser"
       "claude"
       "cloudflare-warp"
       "discord"
@@ -182,53 +182,35 @@ in
       "orbstack"
       "sdformatter"
       "secretive"
-      "steam"
       "thebrowsercompany-dia"
     ];
 
     masApps = {
       "Accelerate" = 1459809092;
-      "Actions" = 1586435171;
       "AdGuard for Safari" = 1440147259;
       "Amphetamine" = 937984704;
       "Blackmagic Disk Speed Test" = 425264550;
-      "Command X" = 6448461551;
-      "Consent-O-Matic" = 1606897889;
       "CotEditor" = 1024640650;
       "DevCleaner" = 1388020431;
       "Document Generator" = 1437883178;
-      "Final Cut Pro" = 424389933;
       "FocusRecorder" = 6446467176;
       "Gifski" = 1351639930;
       "Hex Fiend" = 1342896380;
       "Hush" = 1544743900;
-      "iHosts" = 1102004240;
-      "Keepa - Price Tracker" = 1533805339;
       "Keynote" = 409183694;
-      "Kindle" = 302584613;
-      "LadioCast" = 411213048;
       "LanguageTranslator" = 1218781096;
       "Leftovers" = 6746164364;
-      "LINE" = 539883307;
       "Microsoft Excel" = 462058435;
       "Microsoft Remote Desktop" = 1295203466;
       "Microsoft Word" = 462054704;
       "NamingTranslator" = 1218784832;
       "Pages" = 409201541;
-      "Refined GitHub" = 1519867270;
-      "Screegle" = 1591051659;
       "Seashore" = 1448648921;
       "Shareful" = 1522267256;
       "Slack" = 803453959;
-      "Spark" = 1176895641;
-      "Squirrel" = 1669664068;
       "TabifyIndents" = 1179234554;
       "TestFlight" = 899247664;
       "The Unarchiver" = 425424353;
-      "uBlacklist for Safari" = 1547912640;
-      "Userscripts" = 1463298887;
-      "Velja" = 1607635845;
-      "WhatsApp" = 310633997;
       "Xcode" = 497799835;
     };
   };
