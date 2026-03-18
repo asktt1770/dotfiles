@@ -182,6 +182,7 @@ in
       "orbstack"
       "sdformatter"
       "secretive"
+      "tailscale"
       "thebrowsercompany-dia"
     ];
 
