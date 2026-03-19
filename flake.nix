@@ -434,6 +434,8 @@
               homedir = darwinHomedir;
             })
 
+            ./nix/modules/darwin/rosetta.nix
+
             nix-index-database.darwinModules.nix-index
 
             home-manager.darwinModules.home-manager
