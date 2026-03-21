@@ -19,6 +19,24 @@ Run Codex in non-interactive mode using the bundled binary:
 codex exec "YOUR_PROMPT_HERE"
 ```
 
+### Model Selection
+
+Use `-m` / `--model` to specify a model:
+
+```bash
+codex exec -m MODEL_ID "YOUR_PROMPT_HERE"
+```
+
+The default model may be a `-spark` variant, which is optimised for speed. For complex or deep-reasoning queries, prefer a non-spark model. Non-spark models think more thoroughly and produce higher-quality answers for architectural decisions, subtle bugs, and nuanced trade-offs.
+
+#### Available models
+
+Models currently known to the installed Codex binary:
+
+`!`strings $(which codex) 2>/dev/null | rg -oN '"(gpt-[0-9a-z.-]+|o[0-9][a-z0-9.-]+)"' -r '$1' | sort -u | tr '\n' ',' | sed 's/,$//'``
+
+Which models are actually usable depends on your account and plan. You can also run `codex` interactively and open the model picker to see the full up-to-date list.
+
 ## Consultation Workflow
 
 1. **Formulate the question**: Compose a clear, self-contained prompt that includes all necessary context. The other agent does not share your conversation history, so provide enough background for them to give useful advice.
