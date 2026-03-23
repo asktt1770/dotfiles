@@ -14,5 +14,7 @@
 		"type": "command",
 		"command": "__BUN_PATH__ $( ghq root )/github.com/ryoppippi/ccusage/apps/ccusage/src/index.ts statusline --cost-source both"
 	},
-	"alwaysThinkingEnabled": true
+	"alwaysThinkingEnabled": true,
+	"skipAutoPermissionPrompt": true,
+	"skipDangerousModePermissionPrompt": true
 }
