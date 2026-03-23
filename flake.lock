@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "agent-browser-skill": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1774245716,
+        "narHash": "sha256-VgbYHQgavVh99+UKVAtQ+gZq2APk2Lql9QWmfXubKNg=",
+        "owner": "vercel-labs",
+        "repo": "agent-browser",
+        "rev": "d374e413be29cb43aa8cf928789ce0cd57151acd",
+        "type": "github"
+      },
+      "original": {
+        "owner": "vercel-labs",
+        "repo": "agent-browser",
+        "type": "github"
+      }
+    },
     "agent-skills": {
       "inputs": {
         "home-manager": "home-manager",
@@ -626,6 +642,7 @@
     },
     "root": {
       "inputs": {
+        "agent-browser-skill": "agent-browser-skill",
         "agent-skills": "agent-skills",
         "ast-grep-skill": "ast-grep-skill",
         "brew-api": "brew-api",

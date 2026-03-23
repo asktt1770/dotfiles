@@ -6,6 +6,7 @@
 {
   pkgs,
   ast-grep-skill,
+  agent-browser-skill,
   local-skills,
   ...
 }:
@@ -19,6 +20,11 @@
       ast-grep = {
         path = ast-grep-skill;
         subdir = "ast-grep/skills";
+      };
+      # External: agent-browser skill
+      agent-browser = {
+        path = agent-browser-skill;
+        subdir = "skills";
       };
       # Local: skills from this dotfiles repo
       local = {
@@ -34,6 +40,12 @@
       from = "ast-grep";
       path = "ast-grep";
       packages = [ pkgs.ast-grep ];
+    };
+
+    skills.explicit.agent-browser = {
+      from = "agent-browser";
+      path = "agent-browser";
+      packages = [ pkgs.llm-agents.agent-browser ];
     };
 
     # Deploy to standard skills directories
