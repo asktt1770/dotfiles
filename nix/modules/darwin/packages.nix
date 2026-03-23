@@ -39,7 +39,6 @@
       obs
       postman
       processing
-      qlvideo
       raycast
       shottr
       signal
