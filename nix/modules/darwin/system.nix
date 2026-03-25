@@ -163,19 +163,20 @@ in
     ];
 
     casks = [
-      "arto-app/tap/arto"
       "1password"
       "alfred"
       "aqua-voice"
       "arc"
+      "arto-app/tap/arto"
       "blackhole-16ch"
       "blu-ray-player-pro"
+      "cleanshot"
       "claude"
       "cloudflare-warp"
       "discord"
       "google-chrome"
       "google-drive"
-      "imageoptim" # brew-nix has tar.xz extraction issues
+      "imageoptim"
       "karabiner-elements"
       "ollama-app"
       "openvpn-connect"
@@ -202,14 +203,13 @@ in
       "Gifski" = 1351639930;
       "Hex Fiend" = 1342896380;
       "Hush" = 1544743900;
-      "iHosts" = 1102004240;
       "Keepa - Price Tracker" = 1533805339;
       "Keynote" = 409183694;
       "Kindle" = 302584613;
+      "LINE" = 539883307;
       "LadioCast" = 411213048;
       "LanguageTranslator" = 1218781096;
       "Leftovers" = 6746164364;
-      "LINE" = 539883307;
       "Microsoft Excel" = 462058435;
       "Microsoft Remote Desktop" = 1295203466;
       "Microsoft Word" = 462054704;
@@ -225,11 +225,12 @@ in
       "TabifyIndents" = 1179234554;
       "TestFlight" = 899247664;
       "The Unarchiver" = 425424353;
-      "uBlacklist for Safari" = 1547912640;
       "Userscripts" = 1463298887;
       "Velja" = 1607635845;
       "WhatsApp" = 310633997;
       "Xcode" = 497799835;
+      "iHosts" = 1102004240;
+      "uBlacklist for Safari" = 1547912640;
     };
   };
 }

@@ -1,9 +1,10 @@
 { pkgs, ... }:
 {
+  # macOS-specific Nix packages (home-manager)
   home.packages =
     with pkgs;
     [
-      # macOS-specific packages
+      # CLI tools
       ghostty-bin
       chafa
       blueutil
@@ -13,7 +14,7 @@
       mas
       audio-priority-bar
 
-      # macOS GUI applications (not available on Linux in nixpkgs)
+      # GUI applications (available in nixpkgs)
       cyberduck
       keycastr
       monitorcontrol
@@ -40,7 +41,6 @@
       postman
       processing
       raycast
-      cleanshot
       signal
       stats
       vlc
@@ -63,4 +63,5 @@
         };
       }))
     ];
+
 }
