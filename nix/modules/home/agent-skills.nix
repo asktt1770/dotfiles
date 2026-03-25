@@ -65,8 +65,22 @@
         let
           patched =
             builtins.replaceStrings
-              [ "agent-browser " "agent-browser\n" ]
-              [ "./agent-browser " "./agent-browser\n" ]
+              [
+                "` agent-browser "
+                "`agent-browser "
+                "  agent-browser "
+                "\nagent-browser "
+                "| agent-browser "
+                "&& agent-browser "
+              ]
+              [
+                "` ./agent-browser "
+                "`./agent-browser "
+                "  ./agent-browser "
+                "\n./agent-browser "
+                "| ./agent-browser "
+                "&& ./agent-browser "
+              ]
               original;
         in
         ''
