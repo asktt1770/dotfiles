@@ -40,12 +40,40 @@
       from = "ast-grep";
       path = "ast-grep";
       packages = [ pkgs.ast-grep ];
+      transform =
+        { original, dependencies }:
+        let
+          patched =
+            builtins.replaceStrings
+              [ "| ast-grep " "ast-grep scan " "ast-grep run " ]
+              [ "| ./ast-grep " "./ast-grep scan " "./ast-grep run " ]
+              original;
+        in
+        ''
+          ${patched}
+
+          ${dependencies}
+        '';
     };
 
     skills.explicit.agent-browser = {
       from = "agent-browser";
       path = "agent-browser";
       packages = [ pkgs.llm-agents.agent-browser ];
+      transform =
+        { original, dependencies }:
+        let
+          patched =
+            builtins.replaceStrings
+              [ "agent-browser " "agent-browser\n" ]
+              [ "./agent-browser " "./agent-browser\n" ]
+              original;
+        in
+        ''
+          ${patched}
+
+          ${dependencies}
+        '';
     };
 
     # Deploy to standard skills directories
