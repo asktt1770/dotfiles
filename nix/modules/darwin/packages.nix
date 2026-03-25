@@ -40,7 +40,7 @@
       postman
       processing
       raycast
-      shottr
+      cleanshot
       signal
       stats
       vlc
