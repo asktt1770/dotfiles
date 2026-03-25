@@ -21,7 +21,6 @@
       obsidian
     ]
     # brew-nix packages (Homebrew casks managed via Nix)
-    # Note: imageoptim excluded due to tar.xz extraction issues with brew-nix
     ++ (with pkgs.brewCasks; [
       alt-tab
       appcleaner
@@ -48,8 +47,15 @@
       zed
       zoom
     ])
-    # brew-nix packages requiring hash override
+    # brew-nix packages requiring overrides
     ++ [
+      (pkgs.brewCasks.imageoptim.overrideAttrs (o: {
+        nativeBuildInputs = o.nativeBuildInputs ++ [
+          pkgs.gnutar
+          pkgs.xz
+        ];
+        unpackPhase = "tar -xf $src";
+      }))
       (pkgs.brewCasks.quitter.overrideAttrs (oldAttrs: {
         src = pkgs.fetchurl {
           url = builtins.head oldAttrs.src.urls;

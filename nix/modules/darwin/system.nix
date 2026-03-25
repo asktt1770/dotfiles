@@ -176,7 +176,6 @@ in
       "discord"
       "google-chrome"
       "google-drive"
-      "imageoptim"
       "karabiner-elements"
       "ollama-app"
       "openvpn-connect"
