@@ -154,26 +154,6 @@
         "type": "github"
       }
     },
-    "claude-code-overlay": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1774515266,
-        "narHash": "sha256-VV5bHjhKgQ9jcgBM8Ch9s2LpBkM0puTPbfC16ecRMLs=",
-        "owner": "ryoppippi",
-        "repo": "claude-code-overlay",
-        "rev": "2ad0f03dd839e8f4f8ae9762b797bd2fc6d22fb1",
-        "type": "github"
-      },
-      "original": {
-        "owner": "ryoppippi",
-        "repo": "claude-code-overlay",
-        "type": "github"
-      }
-    },
     "fish-na": {
       "flake": false,
       "locked": {
@@ -508,6 +488,26 @@
         "type": "github"
       }
     },
+    "nix-claude-code": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1774525081,
+        "narHash": "sha256-5KFUqokTqcmEUQNhrdxZVPfBFHUrDtAhljixn2fPhWI=",
+        "owner": "ryoppippi",
+        "repo": "nix-claude-code",
+        "rev": "893ee907cd44982b98d9a6d1d3f884615f88460e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ryoppippi",
+        "repo": "nix-claude-code",
+        "type": "github"
+      }
+    },
     "nix-darwin": {
       "inputs": {
         "nixpkgs": [
@@ -647,7 +647,6 @@
         "ast-grep-skill": "ast-grep-skill",
         "brew-api": "brew-api",
         "brew-nix": "brew-nix",
-        "claude-code-overlay": "claude-code-overlay",
         "fish-na": "fish-na",
         "flake-parts": "flake-parts",
         "gh-graph": "gh-graph",
@@ -655,6 +654,7 @@
         "git-hooks": "git-hooks_2",
         "home-manager": "home-manager_2",
         "llm-agents": "llm-agents",
+        "nix-claude-code": "nix-claude-code",
         "nix-darwin": "nix-darwin",
         "nix-filter": "nix-filter",
         "nix-index-database": "nix-index-database",

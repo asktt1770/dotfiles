@@ -35,8 +35,8 @@
 
     llm-agents.url = "github:numtide/llm-agents.nix";
 
-    claude-code-overlay = {
-      url = "github:ryoppippi/claude-code-overlay";
+    nix-claude-code = {
+      url = "github:ryoppippi/nix-claude-code";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -113,7 +113,7 @@
       nix-darwin,
       home-manager,
       llm-agents,
-      claude-code-overlay,
+      nix-claude-code,
       treefmt-nix,
       git-hooks,
       gh-nippou,
@@ -149,7 +149,7 @@
           overlays = [
             llm-agents.overlays.default
             (_final: _prev: {
-              _claude-code-overlay = claude-code-overlay;
+              _nix-claude-code = nix-claude-code;
             })
             gh-nippou.overlays.default
             gh-graph.overlays.default
