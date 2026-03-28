@@ -36,5 +36,5 @@ query (\$owner: String!, \$endCursor: String) {
 
     ghq get $REPO
 
-    cd (ghq root)/github.com/$REPO
+    cd -- (ghq root)/github.com/$REPO
 end
