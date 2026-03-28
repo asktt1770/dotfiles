@@ -34,6 +34,7 @@ let
       command = "${bun} $( ghq root )/github.com/ryoppippi/ccusage/apps/ccusage/src/index.ts statusline --cost-source both";
     };
     alwaysThinkingEnabled = true;
+    autoMemoryEnabled = false;
     skipAutoPermissionPrompt = true;
     skipDangerousModePermissionPrompt = true;
     hooks = {
