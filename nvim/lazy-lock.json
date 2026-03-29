@@ -118,7 +118,6 @@
   "nvim-treesitter-clipping": { "branch": "master", "commit": "fa7c052cfcafa73099dbf2c1697dc56557dbde9f" },
   "nvim-treesitter-context": { "branch": "master", "commit": "adf4b6b0420b7be6c717ef0ac7993183d6c201b1" },
   "nvim-treesitter-textobjects": { "branch": "main", "commit": "93d60a475f0b08a8eceb99255863977d3a25f310" },
-  "nvim-treesitter-textsubjects": { "branch": "master", "commit": "9e3edd38e44c8f3af5634c5e30a33ebd79227f11" },
   "nvim-ts-autotag": { "branch": "main", "commit": "c4ca798ab95b316a768d51eaaaee48f64a4a46bc" },
   "nvim-ts-context-commentstring": { "branch": "main", "commit": "1b212c2eee76d787bbea6aa5e92a2b534e7b4f8f" },
   "nvim_context_vt": { "branch": "master", "commit": "fadbd9e57af72f6df3dd33df32ee733aa01cdbc0" },
