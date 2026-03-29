@@ -1,119 +1,106 @@
 return {
 	"nvim-treesitter/nvim-treesitter",
-	event = { "BufReadPost", "VeryLazy" },
+	lazy = false,
 	dependencies = {
-		{ "yioneko/nvim-yati", enabled = false },
-
 		-- textobj
-		{ "nvim-treesitter/nvim-treesitter-textobjects" },
-		{ "RRethy/nvim-treesitter-textsubjects" },
+		{
+			"nvim-treesitter/nvim-treesitter-textobjects",
+			config = function()
+				require("nvim-treesitter-textobjects").setup({
+					select = {
+						lookahead = true,
+					},
+					move = {
+						set_jumps = true,
+					},
+				})
+
+				local select = require("nvim-treesitter-textobjects.select").select_textobject
+				local keymaps = {
+					["af"] = "@function.outer",
+					["if"] = "@function.inner",
+					["ai"] = "@conditional.outer",
+					["ii"] = "@conditional.inner",
+					["aC"] = "@class.outer",
+					["iC"] = "@class.inner",
+					["ac"] = "@comment.outer",
+					["ic"] = "@comment.inner",
+					["ab"] = "@block.outer",
+					["ib"] = "@block.inner",
+					["al"] = "@loop.outer",
+					["il"] = "@loop.inner",
+					["ip"] = "@parameter.inner",
+					["ap"] = "@parameter.outer",
+				}
+				for key, query in pairs(keymaps) do
+					vim.keymap.set({ "x", "o" }, key, function()
+						select(query, "textobjects")
+					end)
+				end
+
+				vim.keymap.set("n", "<leader>>", function()
+					require("nvim-treesitter-textobjects.swap").swap_next("@parameter.inner")
+				end)
+				vim.keymap.set("n", "<leader><", function()
+					require("nvim-treesitter-textobjects.swap").swap_previous("@parameter.inner")
+				end)
+
+				local move = require("nvim-treesitter-textobjects.move")
+				vim.keymap.set({ "n", "x", "o" }, "]f", function()
+					move.goto_next_start("@function.outer", "textobjects")
+				end)
+				vim.keymap.set({ "n", "x", "o" }, "]c", function()
+					move.goto_next_start("@conditional.outer", "textobjects")
+				end)
+				vim.keymap.set({ "n", "x", "o" }, "]F", function()
+					move.goto_next_end("@function.outer", "textobjects")
+				end)
+				vim.keymap.set({ "n", "x", "o" }, "]C", function()
+					move.goto_next_end("@conditional.outer", "textobjects")
+				end)
+				vim.keymap.set({ "n", "x", "o" }, "[f", function()
+					move.goto_previous_start("@function.outer", "textobjects")
+				end)
+				vim.keymap.set({ "n", "x", "o" }, "[c", function()
+					move.goto_previous_start("@conditional.outer", "textobjects")
+				end)
+				vim.keymap.set({ "n", "x", "o" }, "[F", function()
+					move.goto_previous_end("@function.outer", "textobjects")
+				end)
+				vim.keymap.set({ "n", "x", "o" }, "[C", function()
+					move.goto_previous_end("@conditional.outer", "textobjects")
+				end)
+			end,
+		},
+		{
+			"RRethy/nvim-treesitter-textsubjects",
+			config = function()
+				require("nvim-treesitter-textsubjects").configure({
+					prev_selection = ",",
+					keymaps = {
+						["."] = "textsubjects-smart",
+						[";"] = "textsubjects-container-outer",
+						["i;"] = "textsubjects-container-inner",
+					},
+				})
+			end,
+		},
 		{ "David-Kunz/treesitter-unit" },
 
 		-- UI
 		{ "haringsrob/nvim_context_vt" },
 	},
 	config = function()
-		require("nvim-treesitter.configs").setup({
-			ignore_install = { "phpdoc" },
-			auto_install = false, -- Grammars are provided by Nix
-			sync_install = false,
-			highlight = {
-				enable = true,
-				additional_vim_regex_highlighting = false,
-				disable = function(_, bufnr)
-					return bufnr and vim.api.nvim_buf_line_count(bufnr) > 50000
-				end,
-			},
-			rainbow = {
-				enable = true,
-				extended_mode = true,
-			},
-			matchup = {
-				enable = true,
-			},
-			yati = {
-				enable = true,
-			},
-			autotag = {
-				enable = true,
-			},
-			endwise = {
-				enable = true,
-			},
-			indent = {
-				enable = true,
-			},
-			textobjects = {
-				select = {
-					enable = true,
-					-- Automatically jump forward to textobj, similar to targets.vim
-					lookahead = true,
-					keymaps = {
-						-- You can use the capture groups defined in textobjects.scm
-						["af"] = "@function.outer",
-						["if"] = "@function.inner",
-						["ai"] = "@conditional.outer",
-						["ii"] = "@conditional.inner",
-						["aC"] = "@class.outer",
-						["iC"] = "@class.inner",
-						["ac"] = "@comment.outer",
-						["ic"] = "@comment.inner",
-						["ab"] = "@block.outer",
-						["ib"] = "@block.inner",
-						["al"] = "@loop.outer",
-						["il"] = "@loop.inner",
-						["ip"] = "@parameter.inner",
-						["ap"] = "@parameter.outer",
-						-- ["iS"] = "@scopename.inner",
-						-- ["aS"] = "@statement.outer",
-						-- ["i"] = "@call.inner",
-						-- ["iF"] = "@frame.inner",
-						-- ["oF"] = "@frame.outer",
-					},
-				},
-				swap = {
-					enable = true,
-					swap_next = {
-						["<leader>>"] = "@parameter.inner",
-					},
-					swap_previous = {
-						["<leader><"] = "@parameter.inner",
-					},
-				},
-				move = {
-					enable = true,
-					set_jumps = true, -- whether to set jumps in the jumplist
-					goto_next_start = {
-						["]f"] = "@function.outer",
-						["]c"] = "@conditional.outer",
-					},
-					goto_next_end = {
-						["]F"] = "@function.outer",
-						["]C"] = "@conditional.outer",
-					},
-					goto_previous_start = {
-						["[f"] = "@function.outer",
-						["[c"] = "@conditional.outer",
-					},
-					goto_previous_end = {
-						["[F"] = "@function.outer",
-						["[C"] = "@conditional.outer",
-					},
-				},
-			},
-			textsubjects = {
-				enable = true,
-				prev_selection = ",",
-				keymaps = {
-					["."] = "textsubjects-smart",
-					[";"] = "textsubjects-container-outer",
-					["i;"] = "textsubjects-container-inner",
-				},
-			},
-			tree_docs = { enable = true },
+		require("nvim-treesitter").setup({
+			auto_install = false,
 		})
-		-- vim.opt.foldmethod = "expr"
-		-- vim.opt.foldlevel = 20
-		-- vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+
+		vim.api.nvim_create_autocmd("FileType", {
+			callback = function(args)
+				if vim.api.nvim_buf_line_count(args.buf) <= 50000 then
+					pcall(vim.treesitter.start, args.buf)
+				end
+			end,
+		})
 	end,
 }
