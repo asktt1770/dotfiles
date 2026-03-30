@@ -10,7 +10,7 @@ in
 {
   # Nix store garbage collection (weekly on Sunday 9:00)
   launchd.user.agents.nix-gc = {
-    command = "/nix/var/nix/profiles/default/bin/nix store gc --max 0";
+    command = "${pkgs.nix}/bin/nix-collect-garbage --delete-older-than 7d";
     serviceConfig = {
       RunAtLoad = false;
       StartCalendarInterval = [
