@@ -172,6 +172,7 @@ in
       "blu-ray-player-pro"
       "cleanshot"
       "claude"
+      "codex-app"
       "cloudflare-warp"
       "discord"
       "google-chrome"

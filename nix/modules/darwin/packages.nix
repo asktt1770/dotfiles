@@ -28,6 +28,7 @@
       bluesnooze
       chatgpt
       cursor
+      codex-app
       deskpad
       figma
       glance-chamburr
