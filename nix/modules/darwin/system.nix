@@ -8,6 +8,23 @@ let
   fishPath = "${pkgs.fish}/bin/fish";
 in
 {
+  # Nix store garbage collection (weekly on Sunday 9:00)
+  launchd.user.agents.nix-gc = {
+    command = "/nix/var/nix/profiles/default/bin/nix store gc --max 0";
+    serviceConfig = {
+      RunAtLoad = false;
+      StartCalendarInterval = [
+        {
+          Weekday = 0;
+          Hour = 9;
+          Minute = 0;
+        }
+      ];
+      StandardOutPath = "/tmp/nix-gc.log";
+      StandardErrorPath = "/tmp/nix-gc.log";
+    };
+  };
+
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
