@@ -40,9 +40,9 @@ end, { nargs = 0, force = true })
 vim.api.nvim_create_user_command("CopyPath", function(opts)
 	local path
 	if opts.bang then
-		path = vim.fn.expand("%:p")
-	else
 		path = vim.fn.expand("%:.")
+	else
+		path = vim.fn.expand("%:p")
 	end
 	vim.fn.setreg("+", path)
 	vim.notify("Copied: " .. path)
