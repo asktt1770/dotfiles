@@ -8,8 +8,8 @@ let
   fishPath = "${pkgs.fish}/bin/fish";
 in
 {
-  # Nix store garbage collection (weekly on Sunday 9:00)
-  launchd.user.agents.nix-gc = {
+  # Nix store garbage collection (weekly on Sunday 9:00, runs as root)
+  launchd.daemons.nix-gc = {
     command = "${pkgs.nix}/bin/nix-collect-garbage --delete-older-than 7d";
     serviceConfig = {
       RunAtLoad = false;
@@ -20,8 +20,8 @@ in
           Minute = 0;
         }
       ];
-      StandardOutPath = "/tmp/nix-gc.log";
-      StandardErrorPath = "/tmp/nix-gc.log";
+      StandardOutPath = "/var/log/nix-gc.log";
+      StandardErrorPath = "/var/log/nix-gc.log";
     };
   };
 
