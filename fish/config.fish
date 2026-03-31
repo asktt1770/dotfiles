@@ -121,7 +121,7 @@ if not test -f "$CONFIG_CACHE"; or test "$FISH_CONFIG" -nt "$CONFIG_CACHE"
     # starship init fish >>$CONFIG_CACHE
 
     # set vivid colors
-    echo "set -gx LS_COLORS '$(ensure_installed vivid generate gruvbox-dark)'" >>$CONFIG_CACHE
+    echo "set -gx LS_COLORS '$(ensure_installed vivid generate tokyonight-night)'" >>$CONFIG_CACHE
 
     # jj
     ensure_installed jj util completion fish >>$CONFIG_CACHE
