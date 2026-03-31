@@ -8,6 +8,7 @@
   nodePackages ? null,
   fish-na ? null,
   ast-grep-skill ? null,
+  agent-browser-skill ? null,
   local-skills ? null,
   ...
 }:
@@ -25,6 +26,7 @@ in
       inherit
         pkgs
         ast-grep-skill
+        agent-browser-skill
         local-skills
         config
         ;

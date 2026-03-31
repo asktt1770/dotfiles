@@ -8,6 +8,23 @@ let
   fishPath = "${pkgs.fish}/bin/fish";
 in
 {
+  # Nix store garbage collection (weekly on Sunday 9:00, runs as root)
+  launchd.daemons.nix-gc = {
+    command = "${pkgs.nix}/bin/nix-collect-garbage --delete-older-than 7d";
+    serviceConfig = {
+      RunAtLoad = false;
+      StartCalendarInterval = [
+        {
+          Weekday = 0;
+          Hour = 9;
+          Minute = 0;
+        }
+      ];
+      StandardOutPath = "/var/log/nix-gc.log";
+      StandardErrorPath = "/var/log/nix-gc.log";
+    };
+  };
+
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
@@ -163,19 +180,19 @@ in
     ];
 
     casks = [
-      "arto-app/tap/arto"
       "1password"
       "alfred"
       "aqua-voice"
       "arc"
+      "arto-app/tap/arto"
       "blackhole-16ch"
       "brave-browser"
       "claude"
+      "codex-app"
       "cloudflare-warp"
       "discord"
       "google-chrome"
       "google-drive"
-      "imageoptim" # brew-nix has tar.xz extraction issues
       "karabiner-elements"
       "ollama-app"
       "openvpn-connect"
@@ -213,6 +230,8 @@ in
       "TestFlight" = 899247664;
       "The Unarchiver" = 425424353;
       "Xcode" = 497799835;
+      "iHosts" = 1102004240;
+      "uBlacklist for Safari" = 1547912640;
     };
   };
 }

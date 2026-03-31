@@ -26,10 +26,10 @@ The configuration is organised into modular files:
 
 #### macOS
 
-1. Install [Determinate Nix](https://github.com/DeterminateSystems/nix-installer):
+1. Install [Nix](https://nixos.org/download/):
 
    ```sh
-   curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+   curl --proto '=https' --tlsv1.2 -sSf -L https://install.nixos.org | sh -s -- install
    ```
 
 2. Clone this repository:
@@ -52,10 +52,10 @@ The configuration is organised into modular files:
 
 #### Linux
 
-1. Install Nix (if not already installed):
+1. Install [Nix](https://nixos.org/download/) (if not already installed):
 
    ```sh
-   curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+   curl --proto '=https' --tlsv1.2 -sSf -L https://install.nixos.org | sh -s -- install
    ```
 
 2. Clone this repository:

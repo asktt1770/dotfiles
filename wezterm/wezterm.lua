@@ -31,19 +31,19 @@ local config = {
 		bottom = 0,
 	},
 
-	window_background_opacity = 0.70,
-	macos_window_background_blur = 20,
+	window_background_opacity = 1.0,
+	macos_window_background_blur = 0,
 	window_decorations = "RESIZE",
-	window_background_gradient = {
-		colors = { "#000000" },
-	},
+	--window_background_gradient = {
+	--	colors = { "#000000" },
+	--},
 
 	use_ime = true,
 	send_composed_key_when_left_alt_is_pressed = false,
 	send_composed_key_when_right_alt_is_pressed = false,
 	keys = keys,
 	set_environment_variables = {},
-	-- keys = create_keybinds(),
+	-- keys = create_keybinds( ),
 	leader = { key = ";", mods = "CTRL" },
 	enable_csi_u_key_encoding = true,
 	unix_domains = {
@@ -56,7 +56,20 @@ local config = {
 }
 
 config = utils.merge_tables(config, require("tab_bar"))
-config = utils.merge_tables(config, require("colors.kanagawa_dragon"))
+local function scheme_for_appearance(appearance)
+	if appearance:find("Dark") then
+		-- return "tokyonight_night"
+		-- return "OneDark (base16)"
+		return "Woodland (base16)"
+		-- return "Wzoreck (Gogh)"
+	else
+		-- return "One Light (base16)"
+		-- return "ayu_light"
+		return "Atelier Estuary Light (base16)"
+	end
+end
+
+config.color_scheme = scheme_for_appearance(wezterm.gui.get_appearance())
 
 require("zen-mode")
 

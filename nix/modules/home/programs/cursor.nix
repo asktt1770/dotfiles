@@ -20,10 +20,10 @@ let
       vimMode = false;
     };
     model = {
-      modelId = "composer-1";
-      displayModelId = "composer-1";
-      displayName = "Composer 1";
-      displayNameShort = "Composer 1";
+      modelId = "composer-2-fast";
+      displayModelId = "composer-2-fast";
+      displayName = "Composer 2 Fast";
+      displayNameShort = "Composer 2 Fast";
       aliases = [ ];
     };
     hasChangedDefaultModel = true;

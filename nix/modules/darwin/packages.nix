@@ -1,9 +1,10 @@
 { pkgs, ... }:
 {
+  # macOS-specific Nix packages (home-manager)
   home.packages =
     with pkgs;
     [
-      # macOS-specific packages
+      # CLI tools
       ghostty-bin
       chafa
       blueutil
@@ -12,15 +13,15 @@
       terminal-notifier
       mas
       audio-priority-bar
+      ansible
 
-      # macOS GUI applications (not available on Linux in nixpkgs)
+      # GUI applications (available in nixpkgs)
       cyberduck
       keycastr
       monitorcontrol
       obsidian
     ]
     # brew-nix packages (Homebrew casks managed via Nix)
-    # Note: imageoptim excluded due to tar.xz extraction issues with brew-nix
     ++ (with pkgs.brewCasks; [
       alt-tab
       appcleaner
@@ -28,6 +29,7 @@
       bluesnooze
       chatgpt
       cursor
+      codex-app
       deskpad
       figma
       glance-chamburr
@@ -39,9 +41,7 @@
       obs
       postman
       processing
-      qlvideo
       raycast
-      shottr
       signal
       stats
       vlc
@@ -49,8 +49,15 @@
       zed
       zoom
     ])
-    # brew-nix packages requiring hash override
+    # brew-nix packages requiring overrides
     ++ [
+      (pkgs.brewCasks.imageoptim.overrideAttrs (o: {
+        nativeBuildInputs = o.nativeBuildInputs ++ [
+          pkgs.gnutar
+          pkgs.xz
+        ];
+        unpackPhase = "tar -xf $src";
+      }))
       (pkgs.brewCasks.quitter.overrideAttrs (oldAttrs: {
         src = pkgs.fetchurl {
           url = builtins.head oldAttrs.src.urls;
@@ -64,4 +71,5 @@
         };
       }))
     ];
+
 }

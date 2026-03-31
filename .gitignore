@@ -29,6 +29,9 @@ Temporary Items
 
 .luarc.json
 
+# Obsidian (local workspace/UI state)
+.obsidian/
+
 .mypy_cache/*
 
 result

@@ -11,10 +11,9 @@ let
     font-size = 13;
     font-feature = [ "-dlig" ];
 
-    background-opacity = 0.70;
-    background-blur-radius = 20;
+    background-opacity = 1;
 
-    theme = "Kanagawa Dragon";
+    theme = "dark:One Double Dark,light:Novel";
 
     shell-integration = "fish";
     shell-integration-features = "no-cursor";
