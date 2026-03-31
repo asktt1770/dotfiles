@@ -12,6 +12,7 @@
       terminal-notifier
       mas
       audio-priority-bar
+      ansible
 
       # macOS GUI applications (not available on Linux in nixpkgs)
       cyberduck

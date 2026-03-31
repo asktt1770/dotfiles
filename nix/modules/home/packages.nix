@@ -12,7 +12,6 @@ in
       curl
       htop
       fish
-      tmux
       # VCS
       bit
       git
@@ -28,6 +27,7 @@ in
       zoxide
       bat
       eza
+      yazi
       wezterm
       jq
       dust
