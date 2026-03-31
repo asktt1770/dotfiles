@@ -1,10 +1,18 @@
 # Dotfiles Repository
 
-ryoppippi's personal dotfiles managed via **Nix Flake** (nix-darwin + home-manager).
+asktt1770's personal dotfiles, forked from [ryoppippi/dotfiles](https://github.com/ryoppippi/dotfiles). Managed via **Nix Flake** (nix-darwin + home-manager).
 
 ## Quick Reference
 
 See @README.md for full documentation.
+
+## Documentation
+
+- [Cheatsheet](docs/cheatsheet.md)
+- [Setup Guide](docs/setup-guide.md)
+- [Maintenance](docs/maintenance.md)
+- [Terminal Usage](docs/terminal-usage.md)
+- [Switch Changes](docs/switch-changes.md)
 
 ## Core Commands
 
