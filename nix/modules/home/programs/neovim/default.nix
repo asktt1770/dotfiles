@@ -89,6 +89,8 @@ in
 
   };
 
+  xdg.configFile."nvim/init.lua".enable = false;
+
   # Create symlink to NeoVim configuration in dotfiles (bypassing Nix store)
   home.activation.linkNvimConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     ${helpers.activation.mkLinkForce}
