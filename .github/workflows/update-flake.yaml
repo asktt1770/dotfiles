@@ -33,6 +33,6 @@ jobs:
       skip-delay: ${{ github.event.inputs.skip-delay == 'true' }}
       summary-title: 'Stable Update Summary'
     secrets:
-      app-id: ${{ secrets.RYOPPIPPI_NIX_UPDATER_APP_ID }}
-      private-key: ${{ secrets.RYOPPIPPI_NIX_UPDATER_APP_PRIVATE_KEY }}
+      app-id: ${{ secrets.NIX_UPDATER_APP_ID }}
+      private-key: ${{ secrets.NIX_UPDATER_APP_PRIVATE_KEY }}
       cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }}

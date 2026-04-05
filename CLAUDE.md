@@ -54,9 +54,23 @@ nix run .#build                # Test build
 ## Git Workflow
 
 - **Main branch**: `main`
-- **Never push to main directly** - create a PR
+- **Never push to main directly** - create a PR, then **squash merge**
 - Use **Conventional Commits** with UK English spelling
 - Commits are GPG-signed with SSH
+- **Never commit personal information** (email addresses, passwords, API keys) — use placeholders like `<your-email>`
+
+### GitHub CLI (`gh`)
+
+This repo is a fork of ryoppippi/dotfiles. `gh` defaults to the upstream repo, so **always use `--repo asktt1770/dotfiles`** for PR/issue commands.
+
+### Upstream Sync (monthly)
+
+```bash
+git fetch upstream
+git merge upstream/main  # Resolve conflicts
+nix run .#build          # Verify build
+# Then create PR via /create-pr
+```
 
 ## External Skills (agent-skills-nix)
 

@@ -20,8 +20,8 @@ jobs:
         id: bot
         uses: ./.github/actions/setup-git-bot
         with:
-          app-id: ${{ secrets.RYOPPIPPI_NIX_UPDATER_APP_ID }}
-          private-key: ${{ secrets.RYOPPIPPI_NIX_UPDATER_APP_PRIVATE_KEY }}
+          app-id: ${{ secrets.NIX_UPDATER_APP_ID }}
+          private-key: ${{ secrets.NIX_UPDATER_APP_PRIVATE_KEY }}
 
       - name: Checkout repository (with bot token)
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -55,7 +55,7 @@ jobs:
       - name: Build and test
         if: steps.update.outputs.has_changes == 'true'
         run: |
-          nix build .#darwinConfigurations.ryoppippi.system --show-trace
+          nix build .#darwinConfigurations.asktt1770.system --show-trace
 
       - name: Create Pull Request
         if: steps.update.outputs.has_changes == 'true'
