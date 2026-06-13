@@ -35,8 +35,8 @@ The configuration is organised into modular files:
 2. Clone this repository:
 
    ```sh
-   git clone https://github.com/ryoppippi/dotfiles.git ~/ghq/github.com/ryoppippi/dotfiles
-   cd ~/ghq/github.com/ryoppippi/dotfiles
+   git clone https://github.com/asktt1770/dotfiles.git ~/ghq/github.com/asktt1770/dotfiles
+   cd ~/ghq/github.com/asktt1770/dotfiles
    ```
 
 3. Apply the nix-darwin configuration (this will also install Homebrew automatically):
@@ -61,8 +61,8 @@ The configuration is organised into modular files:
 2. Clone this repository:
 
    ```sh
-   git clone https://github.com/ryoppippi/dotfiles.git ~/ghq/github.com/ryoppippi/dotfiles
-   cd ~/ghq/github.com/ryoppippi/dotfiles
+   git clone https://github.com/asktt1770/dotfiles.git ~/ghq/github.com/asktt1770/dotfiles
+   cd ~/ghq/github.com/asktt1770/dotfiles
    ```
 
 3. Apply Home Manager configuration:
