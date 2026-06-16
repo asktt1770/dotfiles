@@ -19,6 +19,7 @@ in
       git-wt
       git-lfs
       ghq
+      mergiraf
       # Search & file utilities
       ripgrep
       fd
