@@ -198,7 +198,6 @@ in
       "arto-app/tap/arto"
       "blackhole-16ch"
       "blu-ray-player-pro"
-      "brave-browser"
       "cleanshot"
       "claude"
       "codex-app"
@@ -215,7 +214,6 @@ in
       "sdformatter"
       "secretive"
       "steam"
-      "tailscale"
     ];
 
     masApps = {

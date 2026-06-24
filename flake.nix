@@ -138,7 +138,10 @@
       ...
     }:
     let
-      username = "asktt1770";
+      # Personal values (username, githubId, homebrew extras) live in the
+      # repo-root personal.nix, which upstream does not have — see that file.
+      personal = import ./personal.nix;
+      inherit (personal) username;
       darwinHomedir = "/Users/${username}";
       linuxHomedir = "/home/${username}";
 
@@ -224,7 +227,7 @@
                       helpers
                       ;
                     homedir = linuxHomedir;
-                    dotfilesDir = "${linuxHomedir}/ghq/github.com/asktt1770/dotfiles";
+                    dotfilesDir = "${linuxHomedir}/ghq/github.com/${username}/dotfiles";
                   })
                 ];
               }
@@ -365,7 +368,7 @@
               type = "app";
               program = toString (
                 localPkgs.writeShellScript "nvim-restore" ''
-                  : "''${DOTFILES_DIR:=${homedir}/ghq/github.com/asktt1770/dotfiles}"
+                  : "''${DOTFILES_DIR:=${homedir}/ghq/github.com/${username}/dotfiles}"
                   if [ ! -d "$DOTFILES_DIR" ]; then
                     DOTFILES_DIR="$(pwd)"
                   fi
@@ -510,6 +513,9 @@
               homedir = darwinHomedir;
             })
 
+            # Personal homebrew overrides (casks/masApps) — see personal.nix
+            ./nix/modules/darwin/personal.nix
+
             nix-index-database.darwinModules.nix-index
 
             home-manager.darwinModules.home-manager
@@ -558,7 +564,7 @@
                           helpers
                           ;
                         homedir = darwinHomedir;
-                        dotfilesDir = "${darwinHomedir}/ghq/github.com/asktt1770/dotfiles";
+                        dotfilesDir = "${darwinHomedir}/ghq/github.com/${username}/dotfiles";
                       })
                     ];
                   };
