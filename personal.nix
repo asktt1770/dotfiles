@@ -8,6 +8,10 @@
   githubId = "75629350"; # used for the GitHub noreply commit email
 
   homebrew = {
+    # NOTE the asymmetry below: `extraCasks` is ADDITIVE (appended to upstream's
+    # casks), while `masApps` is a FULL REPLACEMENT (mkForce). Adding to one is
+    # not the same operation as adding to the other.
+
     # Casks ADDED on top of upstream's list (nix-darwin merges by list
     # concatenation, so these are appended to whatever upstream ships).
     extraCasks = [
