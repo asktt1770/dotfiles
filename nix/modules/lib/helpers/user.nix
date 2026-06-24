@@ -1,7 +1,7 @@
 { config }:
 let
   inherit (config.home) username;
-  githubId = "75629350";
+  inherit (import ../../../../personal.nix) githubId; # single source of truth
   email = "${githubId}+${username}@users.noreply.github.com";
 in
 {
