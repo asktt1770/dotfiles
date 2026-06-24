@@ -1,6 +1,5 @@
 function cppath --description 'Print a file/dir absolute path and copy it to the clipboard'
     if test (count $argv) -eq 0
-        echo "Pass a file or dir (defaults to .)"
         set argv .
     end
 
