@@ -6,7 +6,10 @@
   ...
 }:
 let
-  fishPath = lib.getExe pkgs.fish;
+  # chsh only accepts a shell listed in /etc/shells. environment.shells
+  # registers the /run/current-system symlink form, not the raw store path,
+  # so use that here or chsh silently fails and the login shell stays unchanged.
+  fishPath = "/run/current-system/sw/bin/fish";
 in
 {
   # Allow unfree packages
