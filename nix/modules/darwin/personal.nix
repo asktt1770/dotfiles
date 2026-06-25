@@ -12,4 +12,12 @@ in
 
   # Full override of upstream's masApps (see personal.nix for rationale).
   homebrew.masApps = lib.mkForce personal.homebrew.masApps;
+
+  # Disable Spotlight indexing on the Data volume. Personal preference:
+  # Raycast covers app-launch + clipboard, and file search goes unused,
+  # so the FS metadata index (mds_stores, ~1GB resident) is pure overhead.
+  # Runs as root on every switch; idempotent. Revert: `mdutil -i on`.
+  system.activationScripts.postActivation.text = ''
+    /usr/bin/mdutil -i off /System/Volumes/Data || true
+  '';
 }
