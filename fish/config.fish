@@ -16,6 +16,9 @@ end
 
 # Source home-manager session variables
 set -l HM_SESSION_VARS "$HOME/.local/state/home-manager/gcroots/current-home/home-path/etc/profile.d/hm-session-vars.sh"
+if not test -f $HM_SESSION_VARS
+    set HM_SESSION_VARS "/etc/profiles/per-user/$USER/etc/profile.d/hm-session-vars.sh"
+end
 if test -f $HM_SESSION_VARS
     set -l hm_session_keys
     for line in (string match -r '^export [A-Za-z_][A-Za-z0-9_]*=' <$HM_SESSION_VARS)
@@ -24,7 +27,7 @@ if test -f $HM_SESSION_VARS
     end
 
     if test (count $hm_session_keys) -gt 0
-        for line in (bash --noprofile --norc -c 'source "$1" >/dev/null; env' bash $HM_SESSION_VARS)
+        for line in (env -u __HM_SESS_VARS_SOURCED bash --noprofile --norc -c 'source "$1" >/dev/null; env' bash $HM_SESSION_VARS)
             set -l key (string split -m1 '=' -- $line)[1]
             if contains -- $key $hm_session_keys
                 set -l value (string split -m1 '=' -- $line)[2]
@@ -99,7 +102,13 @@ fish_add_path $HOME/.scripts
 fish_add_path $HOME/.scripts/bin
 
 # Add home-manager packages to PATH
-fish_add_path ~/.local/state/home-manager/gcroots/current-home/home-path/bin
+# Prefer the standalone home-manager gcroots (Linux / `home-manager switch`),
+# falling back to the nix-darwin module profile (`/etc/profiles/per-user`).
+set -l HM_PATH_BIN "$HOME/.local/state/home-manager/gcroots/current-home/home-path/bin"
+if not test -d $HM_PATH_BIN
+    set HM_PATH_BIN "/etc/profiles/per-user/$USER/bin"
+end
+fish_add_path $HM_PATH_BIN
 
 # Secretive
 set SSH_SECRETIVE_SSH_SOCK $HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh
