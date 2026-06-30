@@ -1,5 +1,16 @@
 {
 	"hooks": {
+		"PreToolUse": [
+			{
+				"matcher": "Edit|Write|MultiEdit|NotebookEdit",
+				"hooks": [
+					{
+						"type": "command",
+						"command": "input=$(cat); fp=$(printf '%s' \"$input\" | jq -r '.tool_input.file_path // \"\"'); [ -z \"$fp\" ] && exit 0; dir=$(dirname \"$fp\"); branch=$(git -C \"$dir\" branch --show-current 2>/dev/null); if [ \"$branch\" = \"main\" ] || [ \"$branch\" = \"master\" ]; then echo \"BLOCKED: editing on the main branch is not allowed in this repo. Create an isolated worktree first with the EnterWorktree tool (it branches a feature branch from origin/main), then edit inside it. See CLAUDE.md > Worktree Workflow.\" >&2; exit 2; fi; exit 0"
+					}
+				]
+			}
+		],
 		"PostToolUse": [
 			{
 				"matcher": "Edit|Write|NotebookEdit",

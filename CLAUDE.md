@@ -53,6 +53,26 @@ nix run .#build                # Test build
 - Use **Conventional Commits** with UK English spelling
 - Commits are GPG-signed with SSH
 
+## Worktree Workflow
+
+When starting actual implementation work (not consultation or research), work
+inside a dedicated git worktree — never edit files directly on `main`.
+
+- **Start of work**: use the `EnterWorktree` tool to create a worktree + branch
+  (it branches from the latest `origin/main`). Do this _before_ making any
+  edits, so nothing lands on `main` by accident.
+- **Consultation / research only**: stay on `main`; no worktree needed.
+- **Parallel task found mid-work**: capture it as a GitHub issue
+  (`gh issue create`) from the current session — do not start coding it on the
+  current branch. Handle it in a separate worktree/session.
+- **Building**: the flake only sees git-tracked files, so run `git add -A`
+  before `nix run .#build` / `nix flake check`. The `Git tree ... is dirty`
+  warning is expected, not an error.
+- **Applying** (`nix run .#switch`): the user runs this (needs sudo) inside the
+  worktree directory. Only one branch's config can be live at a time.
+- **Finishing**: push → PR → CI → review → squash merge. Call `ExitWorktree`
+  only when the user asks.
+
 ## External Skills (agent-skills-nix)
 
 Claude Code skills are managed via [agent-skills-nix](https://github.com/Kyure-A/agent-skills-nix).
