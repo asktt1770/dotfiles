@@ -21,6 +21,15 @@ _final: prev: {
     # optional `full` extra which we deliberately omit.
     dependencies = [ ];
 
+    # Nix owns this install: the store is read-only and settings.json is generated
+    # declaratively. Disable the daily background self-upgrade (pip/uv) that `cs`
+    # would otherwise spawn from the render path. Use --set-default so it can still
+    # be overridden per-shell. (The once-a-day settings.json self-heal is not gated
+    # by any env var, but it writes to ~/.claude/settings.json, which Claude Code
+    # does not read here since CLAUDE_CONFIG_DIR points at ~/.config/claude, so it
+    # cannot clobber the Nix-managed settings.)
+    makeWrapperArgs = [ "--set-default CLAUDE_STATUSBAR_NO_UPDATE 1" ];
+
     # No test suite wired for the packaged sdist; import check is enough.
     doCheck = false;
     pythonImportsCheck = [ "claude_statusbar" ];
