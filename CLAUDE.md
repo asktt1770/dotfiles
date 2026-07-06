@@ -1,6 +1,6 @@
 # Dotfiles Repository
 
-ryoppippi's personal dotfiles managed via **Nix Flake** (nix-darwin + home-manager).
+asktt1770's personal dotfiles managed via **Nix Flake** (nix-darwin + home-manager).
 
 ## Quick Reference
 
