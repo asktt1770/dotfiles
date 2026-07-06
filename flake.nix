@@ -1,5 +1,5 @@
 {
-  description = "ryoppippi's home-manager configuration";
+  description = "asktt1770's home-manager configuration";
 
   nixConfig = {
     extra-substituters = [

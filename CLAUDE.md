@@ -1,6 +1,8 @@
 # Dotfiles Repository
 
-ryoppippi's personal dotfiles managed via **Nix Flake** (nix-darwin + home-manager).
+asktt1770's personal dotfiles managed via **Nix Flake** (nix-darwin + home-manager).
+
+Forked from [ryoppippi/dotfiles](https://github.com/ryoppippi/dotfiles) and customised for asktt1770's setup. User/machine-specific values are kept in the untracked-upstream `personal.nix` so that syncing upstream stays conflict-free.
 
 ## Quick Reference
 
