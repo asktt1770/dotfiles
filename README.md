@@ -42,7 +42,7 @@ The configuration is organised into modular files:
 3. Apply the nix-darwin configuration (this will also install Homebrew automatically):
 
    ```sh
-   sudo nix run nix-darwin -- switch --flake .#ryoppippi
+   sudo nix run nix-darwin -- switch --flake .#asktt1770
    ```
 
 4. Reload your shell:
