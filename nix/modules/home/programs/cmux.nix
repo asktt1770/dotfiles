@@ -11,7 +11,7 @@ let
     schemaVersion = 1;
 
     app = {
-      appearance = "dark";
+      appearance = "system";
       warnBeforeQuit = true;
       minimalMode = false;
     };
