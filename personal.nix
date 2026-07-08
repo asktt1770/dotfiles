@@ -25,14 +25,20 @@
     # own masApps additions are intentionally NOT inherited (full curation).
     masApps = {
       "Actions" = 1586435171;
+      "AdGuard for Safari" = 1440147259;
       "Amphetamine" = 937984704;
-      "Keynote" = 409183694;
+      "Consent-O-Matic" = 1606897889;
+      "Hush" = 1544743900;
+      "Keynote" = 361285480;
       "Kindle" = 302584613;
       "LINE" = 539883307;
-      "Pages" = 409201541;
+      "Pages" = 361309726;
+      "Refined GitHub" = 1519867270;
       "Slack" = 803453959;
       "Spark" = 1176895641;
       "The Unarchiver" = 425424353;
+      "uBlacklist for Safari" = 1547912640;
+      "Userscripts" = 1463298887;
       "WhatsApp" = 310633997;
     };
   };
