@@ -15,6 +15,17 @@ in
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
+  # nix-darwin's HTML manual builder passes `--sidebar-depth` to
+  # `nixos-render-docs manual html`, but the current nixpkgs revision ships a
+  # `nixos-render-docs` that rejects that flag, so `darwin-manual-html` fails
+  # to build. This is an upstream incompatibility (present even on nix-darwin
+  # HEAD). Man pages use a different, working subcommand, so keep those and
+  # only drop the HTML manual (`documentation.doc`). The uninstaller
+  # internally re-evaluates a full darwin system with default options, which
+  # rebuilds the broken manual, so disable it too.
+  documentation.doc.enable = false;
+  system.tools.darwin-uninstaller.enable = false;
+
   nix = {
     gc = {
       automatic = true;
@@ -40,10 +51,11 @@ in
     };
   };
 
-  # Enable Touch ID and Apple Watch for sudo (including tmux support via pam-reattach)
-  security.pam.services.sudo_local.touchIdAuth = true;
-  security.pam.services.sudo_local.watchIdAuth = true;
-  security.pam.services.sudo_local.reattach = true;
+  security.pam.services.sudo_local.text = ''
+    auth       optional       ${pkgs.pam-reattach}/lib/pam/pam_reattach.so
+    auth       sufficient     pam_tid.so
+    auth       sufficient     ${pkgs.pam-watchid}/lib/pam_watchid.so
+  '';
 
   system = {
     # Set system state version
@@ -51,6 +63,21 @@ in
 
     # Set primary user for homebrew
     primaryUser = username;
+
+    activationScripts.homebrew.text = lib.mkBefore ''
+      if ! /usr/sbin/pkgutil --pkg-info com.apple.pkg.RosettaUpdateAuto >/dev/null 2>&1; then
+        /usr/sbin/softwareupdate --install-rosetta --agree-to-license
+      fi
+
+      xcodebuild=/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild
+      if [ -x "$xcodebuild" ] && ! "$xcodebuild" -license check >/dev/null 2>&1; then
+        "$xcodebuild" -license accept
+      fi
+
+      if [ -t 0 ]; then
+        /usr/bin/sudo --user=${username} --set-home /usr/bin/sudo --validate
+      fi
+    '';
 
     # Set user shell on activation
     activationScripts.postActivation.text = ''
@@ -69,11 +96,33 @@ in
       # Dock settings
       dock = {
         autohide = true; # Automatically hide and show the Dock
+        launchanim = true;
+        magnification = false;
         tilesize = 45; # Icon size
         persistent-apps = [ ]; # Remove all pinned applications
+        persistent-others = [
+          {
+            folder = {
+              path = "${homedir}/Dropbox/Screenshots";
+              arrangement = "date-added";
+              showas = "fan";
+            };
+          }
+          {
+            folder = {
+              path = "${homedir}/Dropbox/Downloads";
+              arrangement = "date-added";
+              showas = "fan";
+            };
+          }
+        ];
         show-recents = false; # Don't show recent applications
+        show-process-indicators = true;
         mineffect = "genie";
         orientation = "bottom"; # Dock position
+        showAppExposeGestureEnabled = true;
+        showDesktopGestureEnabled = true;
+        showMissionControlGestureEnabled = true;
       };
 
       # Finder settings
@@ -91,12 +140,19 @@ in
         # Appearance
         AppleInterfaceStyle = "Dark"; # Dark mode
         AppleShowAllExtensions = true; # Show all file extensions
+        AppleShowScrollBars = "Automatic";
+        AppleScrollerPagingBehavior = false;
+        NSTableViewDefaultSizeMode = 2;
 
         # Keyboard
+        ApplePressAndHoldEnabled = true;
         KeyRepeat = 2; # Fast key repeat (1-2 is very fast)
         InitialKeyRepeat = 25; # Initial key repeat delay
 
         # Trackpad speed (0.0 = slowest, 3.0 = fastest)
+        AppleEnableSwipeNavigateWithScrolls = true;
+        "com.apple.swipescrolldirection" = true;
+        "com.apple.trackpad.forceClick" = true;
         "com.apple.trackpad.scaling" = 1.3;
 
         # Disable auto-correct and substitutions
@@ -117,34 +173,53 @@ in
         type = "png";
       };
 
+      screensaver = {
+        askForPassword = true;
+        askForPasswordDelay = 0;
+      };
+
       # Trackpad settings
       trackpad = {
-        Clicking = false; # Tap to click disabled
-        TrackpadRightClick = true; # Two-finger secondary click
-        TrackpadThreeFingerDrag = false; # Disable three-finger drag
+        Clicking = false;
+        ActuationStrength = 1;
+        ActuateDetents = true;
+        FirstClickThreshold = 0;
+        ForceSuppressed = false;
+        SecondClickThreshold = 0;
+        TrackpadFourFingerHorizSwipeGesture = 2;
+        TrackpadFourFingerPinchGesture = 2;
+        TrackpadFourFingerVertSwipeGesture = 2;
+        TrackpadPinch = true;
+        TrackpadRightClick = true;
+        TrackpadRotate = true;
+        TrackpadThreeFingerDrag = false;
+        TrackpadThreeFingerHorizSwipeGesture = 2;
+        TrackpadThreeFingerTapGesture = 0;
+        TrackpadThreeFingerVertSwipeGesture = 2;
+        TrackpadTwoFingerDoubleTapGesture = true;
+        TrackpadTwoFingerFromRightEdgeSwipeGesture = 3;
       };
 
       # Custom preferences for settings not available in system.defaults
       CustomUserPreferences = {
+        NSGlobalDomain = {
+          AppleAccentColor = -1;
+          AppleReduceDesktopTinting = false;
+        };
+        "com.apple.WindowManager" = {
+          EnableStandardClickToShowDesktop = false;
+          EnableTilingByEdge = false;
+          EnableTopTilingByEdge = false;
+          EnableTilingOptionAccelerator = false;
+          EnableTiledWindowMargins = false;
+          GloballyEnabled = false;
+          StageManagerHideDesktopIcons = true;
+          StageManagerHideWidgets = true;
+          StandardHideDesktopIcons = true;
+          StandardHideWidgets = true;
+        };
         "com.apple.dock" = {
           appswitcher-all-displays = true; # Show app switcher on all displays
-        };
-        "com.apple.AppleMultitouchTrackpad" = {
-          # Click threshold: 0 = light, 1 = medium, 2 = firm
-          FirstClickThreshold = 0;
-          SecondClickThreshold = 0;
-          # Force Click and haptic feedback
-          ActuateDetents = 1; # Haptic feedback enabled
-          ForceSuppressed = 0; # Force Click enabled
-          # Tracking speed (0.0-3.0, default ~1.0)
-          TrackpadThreeFingerTapGesture = 0; # Disable three-finger tap for Look up
-        };
-        "com.apple.driver.AppleBluetoothMultitouch.trackpad" = {
-          # Same settings for Bluetooth trackpad
-          FirstClickThreshold = 0;
-          SecondClickThreshold = 0;
-          ActuateDetents = 1;
-          ForceSuppressed = 0;
         };
       };
     };
@@ -180,10 +255,13 @@ in
   # Homebrew configuration
   homebrew = {
     enable = true;
-    onActivation.cleanup = "uninstall";
+    onActivation = {
+      cleanup = "uninstall";
+    };
 
     taps = [
       "arto-app/tap"
+      "typewhisper/tap"
     ];
 
     brews = [
@@ -193,14 +271,15 @@ in
     casks = [
       "1password"
       "alfred"
-      "aqua-voice"
       "arc"
       "arto-app/tap/arto"
+      "audacity"
       "blackhole-16ch"
       "blu-ray-player-pro"
       "cleanshot"
       "claude"
       "codex-app"
+      "cotypist"
       "cmux"
       "cloudflare-warp"
       "discord"
@@ -211,9 +290,10 @@ in
       "openvpn-connect"
       "orbstack"
       "raycast"
-      "sdformatter"
       "secretive"
       "steam"
+      "telegram"
+      "typewhisper/tap/typewhisper"
     ];
 
     masApps = {
@@ -224,33 +304,22 @@ in
       "Blackmagic Disk Speed Test" = 425264550;
       "Command X" = 6448461551;
       "Consent-O-Matic" = 1606897889;
-      "CotEditor" = 1024640650;
       "DevCleaner" = 1388020431;
       "Document Generator" = 1437883178;
-      "Final Cut Pro" = 424389933;
-      "FocusRecorder" = 6446467176;
       "Gifski" = 1351639930;
-      "Hex Fiend" = 1342896380;
       "Hush" = 1544743900;
       "Keepa - Price Tracker" = 1533805339;
-      "Keynote" = 409183694;
+      "Keynote" = 361285480;
       "Kindle" = 302584613;
       "LINE" = 539883307;
-      "LadioCast" = 411213048;
       "LanguageTranslator" = 1218781096;
-      "Leftovers" = 6746164364;
-      "Microsoft Excel" = 462058435;
       "Microsoft Remote Desktop" = 1295203466;
-      "Microsoft Word" = 462054704;
       "NamingTranslator" = 1218784832;
-      "Pages" = 409201541;
+      "Pages" = 361309726;
       "Refined GitHub" = 1519867270;
-      "Screegle" = 1591051659;
-      "Seashore" = 1448648921;
       "Shareful" = 1522267256;
       "Slack" = 803453959;
       "Spark" = 1176895641;
-      "Squirrel" = 1669664068;
       "TabifyIndents" = 1179234554;
       "TestFlight" = 899247664;
       "The Unarchiver" = 425424353;
@@ -258,7 +327,6 @@ in
       "Velja" = 1607635845;
       "WhatsApp" = 310633997;
       "Xcode" = 497799835;
-      "iHosts" = 1102004240;
       "uBlacklist for Safari" = 1547912640;
     };
   };

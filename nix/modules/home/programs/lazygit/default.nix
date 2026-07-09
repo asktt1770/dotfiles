@@ -11,7 +11,11 @@ let
   gitLogFormat = ''git log --pretty=format:"%Cgreen%h %Creset%cd %Cblue[%cn] %Creset%s%C(yellow)%d%C(reset)" --graph --date=relative --decorate'';
 
   schemaUrl = "https://raw.githubusercontent.com/jesseduffield/lazygit/master/schema/config.json";
-  lazygitConfigFile = "${config.xdg.configHome}/lazygit/config.yml";
+  lazygitConfigFile =
+    if pkgs.stdenv.hostPlatform.isDarwin && !config.xdg.enable then
+      "${config.home.homeDirectory}/Library/Application Support/lazygit/config.yml"
+    else
+      "${config.xdg.configHome}/lazygit/config.yml";
 in
 {
   programs.lazygit = {
@@ -77,7 +81,7 @@ in
     };
   };
 
-  home.activation.validateLazygitSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+  home.activation.validateLazygitSettings = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
     SETTINGS_FILE="${lazygitConfigFile}"
 
     echo "🔍 Validating lazygit config.yml..."

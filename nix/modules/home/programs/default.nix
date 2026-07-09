@@ -52,6 +52,9 @@
         ;
     })
 
+    # gh-nix: run commands with GitHub token bridged into Nix access-tokens
+    ./gh-nix.nix
+
     # Git configuration
     (import ./git {
       inherit
@@ -61,6 +64,8 @@
         helpers
         ;
     })
+
+    ./hunk.nix
 
     # Neovim configuration
     (import ./neovim {

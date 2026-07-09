@@ -1,16 +1,23 @@
 { pkgs, ... }:
+let
+  mkLoginAgent = package: appName: {
+    enable = true;
+    config = {
+      ProgramArguments = [
+        "${package}/Applications/${appName}.app/Contents/MacOS/${appName}"
+      ];
+      ProcessType = "Interactive";
+      RunAtLoad = true;
+    };
+  };
+in
 {
   # macOS-specific Nix packages (home-manager)
   home.packages =
     with pkgs;
     [
       # CLI tools
-      chafa
       blueutil
-      bluetooth-connector
-      switchaudio-osx
-      terminal-notifier
-      mas
       audio-priority-bar
 
       # GUI applications (available in nixpkgs)
@@ -25,44 +32,32 @@
       beekeeper-studio
       betterdisplay
       bluesnooze
-      chatgpt
       cursor
-      deskpad
+      dockdoor
       figma
-      glance-chamburr
-      homerow
       istherenet
       maestral
-      marta
       obs
       signal
       stats
       vlc
-      yaak
       zed
       zoom
     ])
     # brew-nix packages requiring overrides
     ++ [
-      (pkgs.brewCasks.imageoptim.overrideAttrs (o: {
-        nativeBuildInputs = o.nativeBuildInputs ++ [
-          pkgs.gnutar
-          pkgs.xz
-        ];
-        unpackPhase = "tar -xf $src";
-      }))
-      (pkgs.brewCasks.quitter.overrideAttrs (oldAttrs: {
-        src = pkgs.fetchurl {
-          url = builtins.head oldAttrs.src.urls;
-          hash = "sha256-ZzxJmteqohGDVIQMTtGIoUuAHUp9vOX3tRg/sqsD1mk=";
-        };
-      }))
       (pkgs.brewCasks.suspicious-package.overrideAttrs (oldAttrs: {
         src = pkgs.fetchurl {
           url = builtins.head oldAttrs.src.urls;
-          hash = "sha256-J7WsseJWcrWK9ztLF7FZwtqkqFIxtmqG01ps7+jLVWE=";
+          hash = "sha256-m80cgWlFj6TjcMHy6mwvmOzW26/pz6cfn84DKg0bV7w=";
         };
       }))
     ];
+
+  launchd.agents = {
+    bluesnooze = mkLoginAgent pkgs.brewCasks.bluesnooze "Bluesnooze";
+    is-there-net = mkLoginAgent pkgs.brewCasks.istherenet "IsThereNet";
+    stats = mkLoginAgent pkgs.brewCasks.stats "Stats";
+  };
 
 }

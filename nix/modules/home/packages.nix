@@ -1,7 +1,7 @@
 { pkgs, lib, ... }:
 let
   # Check if we're on a platform that supports certain packages
-  inherit (pkgs.stdenv) isDarwin isLinux;
+  inherit (pkgs.stdenv) isLinux;
   isX86Linux = pkgs.stdenv.hostPlatform.system == "x86_64-linux";
 in
 {
@@ -20,6 +20,10 @@ in
       git-lfs
       ghq
       mergiraf
+      # Security
+      tirith
+      # Code review TUI
+      tuicr
       # Search & file utilities
       ripgrep
       fd
@@ -41,14 +45,15 @@ in
       uv
       # Miscellaneous utilities
       fixjson
+      gifski
       roots
 
-      # GUI applications (cross-platform)
+    ]
+    ++ lib.optionals isLinux [
       audacity
     ]
     # Platform-specific GUI applications
-    # telegram-desktop only supports x86_64-linux, x86_64-darwin, aarch64-darwin (not aarch64-linux)
-    ++ lib.optionals (isDarwin || isX86Linux) [
+    ++ lib.optionals isX86Linux [
       telegram-desktop
     ];
 }

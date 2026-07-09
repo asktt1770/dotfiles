@@ -22,6 +22,8 @@ let
     cursor-style = "block";
     cursor-style-blink = false;
 
+    keybind = [ "cmd+u=text:\\x18\\x15" ];
+
     mouse-hide-while-typing = true;
 
     working-directory = "inherit";
@@ -58,6 +60,7 @@ in
   home.activation.linkGhosttyConfig = lib.mkIf pkgs.stdenv.isDarwin (
     lib.hm.dag.entryAfter [ "linkGeneration" ] ''
       ${helpers.activation.mkLinkForce}
+      $DRY_RUN_CMD mkdir -p "${config.home.homeDirectory}/Library/Application Support/com.mitchellh.ghostty"
       link_force "${config.xdg.configHome}/ghostty/config" "${config.home.homeDirectory}/Library/Application Support/com.mitchellh.ghostty/config"
     ''
   );

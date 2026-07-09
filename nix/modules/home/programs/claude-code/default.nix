@@ -31,7 +31,7 @@ let
     includeCoAuthoredBy = false;
     statusLine = {
       type = "command";
-      command = "${bun} $( ghq root )/github.com/ryoppippi/ccusage/apps/ccusage/src/index.ts statusline --cost-source both";
+      command = "${bun} x ccusage statusline --cost-source both";
     };
     alwaysThinkingEnabled = true;
     autoMemoryEnabled = false;
@@ -139,6 +139,7 @@ in
   # Note: All skills (external and local) are managed by agent-skills module
   xdg.configFile = {
     "claude/CLAUDE.md".source = config.lib.file.mkOutOfStoreSymlink "${claudeDotfilesDir}/CLAUDE.md";
+    "claude/shared".source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/agents/shared";
     "claude/commands".source = config.lib.file.mkOutOfStoreSymlink "${claudeDotfilesDir}/commands";
     "claude/agents".source = config.lib.file.mkOutOfStoreSymlink "${claudeDotfilesDir}/agents";
     "claude/output-styles".source =

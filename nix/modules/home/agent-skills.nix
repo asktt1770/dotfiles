@@ -10,6 +10,7 @@
   ast-grep-skill,
   agent-browser-skill,
   tgrab-skill,
+  cmux-skill,
   local-skills,
   ...
 }:
@@ -34,6 +35,10 @@
         path = tgrab-skill;
         subdir = "skills";
       };
+      cmux = {
+        path = cmux-skill;
+        subdir = "skills";
+      };
       # Local: skills from this dotfiles repo
       local = {
         path = local-skills;
@@ -41,7 +46,6 @@
       };
     };
 
-    # Enable all local skills
     skills.enableAll = [ "local" ];
 
     skills.explicit.ast-grep =
@@ -52,6 +56,11 @@
         from = "ast-grep";
         path = "ast-grep";
         packages = [ pkgs.ast-grep ];
+        # Opt out of auto command rewriting: this skill rewrites bare names to
+        # absolute Nix store paths via transform below, not to ./name. Leaving
+        # rewriteCommands on would mangle the frontmatter name and prose, and
+        # double-prefix command paths (.//nix/store/...).
+        rewriteCommands = false;
         transform =
           { original, dependencies }:
           let
@@ -73,6 +82,41 @@
       path = "tgrab";
     };
 
+    skills.explicit.cmux = {
+      from = "cmux";
+      path = "cmux";
+    };
+
+    skills.explicit.cmux-workspace = {
+      from = "cmux";
+      path = "cmux-workspace";
+    };
+
+    skills.explicit.cmux-settings = {
+      from = "cmux";
+      path = "cmux-settings";
+    };
+
+    skills.explicit.cmux-customization = {
+      from = "cmux";
+      path = "cmux-customization";
+    };
+
+    skills.explicit.cmux-diagnostics = {
+      from = "cmux";
+      path = "cmux-diagnostics";
+    };
+
+    skills.explicit.cmux-browser = {
+      from = "cmux";
+      path = "cmux-browser";
+    };
+
+    skills.explicit.cmux-markdown = {
+      from = "cmux";
+      path = "cmux-markdown";
+    };
+
     skills.explicit.agent-browser =
       let
         agentBrowserBin = "${config.home.homeDirectory}/.agents/skills/agent-browser/agent-browser";
@@ -81,6 +125,9 @@
         from = "agent-browser";
         path = "agent-browser";
         packages = [ pkgs.llm-agents.agent-browser ];
+        # Opt out of auto command rewriting: this skill rewrites bare names to
+        # an absolute path under ~/.agents via transform below, not to ./name.
+        rewriteCommands = false;
         transform =
           { original, ... }:
           builtins.replaceStrings
