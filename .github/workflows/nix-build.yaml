@@ -47,13 +47,18 @@ jobs:
       # Exclude binary PDFs: tirith reads them as pasted text and reports
       # false-positive HIGH findings (ANSI escapes, control/confusable chars).
       #
+      # Exclude docs/**: these are this fork's Japanese personal notes, and
+      # tirith flags the ideographic full stop U+3002 (。) as a HIGH confusable
+      # homoglyph of ASCII '.'. That is a false positive on legitimate Japanese
+      # prose, not a homoglyph attack, so the fork-only docs are not scanned.
+      #
       # tirith exit codes: 0 = clean, 1 = high/critical findings (block the
       # gate), 2 = only findings below the --fail-on threshold (allow). The
       # gate must fail only on code 1, so 0 and 2 are treated as passing.
       - name: Scan repository
         run: |
           set +e
-          tirith scan . --exclude '.git/**' --exclude '*.pdf' --ci --fail-on high
+          tirith scan . --exclude '.git/**' --exclude '*.pdf' --exclude 'docs/**' --ci --fail-on high
           rc=$?
           if [ "$rc" -eq 0 ] || [ "$rc" -eq 2 ]; then
             exit 0
