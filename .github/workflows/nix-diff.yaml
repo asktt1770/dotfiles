@@ -26,9 +26,13 @@ jobs:
         uses: natsukium/nix-diff-action@4091452e4c7b3c7ea4ecbaec84be7f0066d810d7 # main
         with:
           skip-no-change: true
-          # Note: darwinConfigurations cannot be built on Linux runners
+          # Note: darwinConfigurations cannot be built on Linux runners.
+          # Only the aarch64-linux config is diffed here because this job runs
+          # on an aarch64 runner: evaluating the x86_64-linux config triggers an
+          # import-from-derivation (the agent-skills bundle) whose x86_64-linux
+          # build cannot run on this ARM runner and, for this fork's skills, is
+          # not available from the binary cache. The x86_64-linux configuration
+          # is still built end-to-end by the build-ubuntu job.
           attributes: |
-            - displayName: home-manager (x86_64-linux)
-              attribute: homeConfigurations.asktt1770.activationPackage
             - displayName: home-manager (aarch64-linux)
               attribute: homeConfigurations.asktt1770-aarch64.activationPackage
