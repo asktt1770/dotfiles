@@ -158,8 +158,9 @@ GH_GROUP="${GH_PATH%% *}"
 # --- rule 2: gh pr create targeting ryoppippi ---------------------------
 
 # Echo the value of the --repo/-R flag (supporting `--repo v`, `--repo=v`,
-# `-R v`, `-R=v`), or empty if the flag is absent. When absent, `gh pr create`
-# resolves to the default base repo (origin = asktt1770), which is safe.
+# `-R v`, `-R=v`), or empty if the flag is absent. When absent, the base repo is
+# resolved from gh's default (see the caller), which in a fork can be the
+# upstream parent — so an empty result is NOT assumed safe.
 flag_value_repo() {
   local i t
   for ((i = 0; i < N; i++)); do
@@ -184,6 +185,15 @@ flag_value_repo() {
 
 if [[ $GH_PATH == "pr create" ]]; then
   repo="$(flag_value_repo)"
+  # A bare `gh pr create` (no --repo/-R) does not target origin by default: gh
+  # resolves the base repo from its configured default (git config
+  # remote.*.gh-resolved / `gh repo set-default`), and for a fork that default
+  # can be the upstream parent. So when --repo is omitted, resolve the base repo
+  # gh would actually use and refuse to proceed if it cannot be confirmed safe.
+  if [[ -z $repo ]]; then
+    repo="$(gh repo set-default --view 2>/dev/null || true)"
+    [[ -z $repo ]] && deny "gh pr create without --repo and no resolvable default base repo (pass --repo asktt1770/dotfiles)"
+  fi
   [[ $repo == *"$UPSTREAM_OWNER"* ]] && deny "gh pr create targeting $UPSTREAM_OWNER"
 fi
 
