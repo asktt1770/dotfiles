@@ -65,7 +65,7 @@ You will execute the following workflow in order:
 
 - Always create a new branch; never push directly to main without explicit permission
 - All commit messages, PR titles, and PR bodies must be in English
-- If a command fails, try using fish shell: `fish -c <command>`
+- Use `zsh -lc '<simple command>'` for normal commands. If Zsh cannot find a user tool, resolve its absolute path with `fish -lc 'command -v <tool>'`; use Fish directly only for simple commands without shell-specific syntax.
 - If `bunx` fails, try `bun x` as an alternative
 - Ensure commits are meaningful and atomic - avoid trivial single-line changes unless they serve a specific purpose
 - Use available high-performance tools: git, gh, rg, fd for file operations

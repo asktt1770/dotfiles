@@ -2,14 +2,24 @@
   pkgs,
   lib,
   config,
-  dotfilesDir ? "${config.home.homeDirectory}/ghq/github.com/asktt1770/dotfiles",
   ...
 }:
 let
-  codexConfigDir = "${config.xdg.configHome}/codex";
-  codexDotfilesDir = "${dotfilesDir}/codex";
+  codexHomeDir = "${config.home.homeDirectory}/.codex";
+  codexXdgDir = "${config.xdg.configHome}/codex";
 
   tomlFormat = pkgs.formats.toml { };
+
+  # Global instructions are assembled from the Codex-specific file plus the
+  # shared fragments in agents/shared/, which are the single source of truth
+  # also imported by claude/CLAUDE.md. Codex has no import mechanism, so the
+  # final AGENTS.md is generated at switch time instead of symlinked.
+  agentsMdText = lib.concatMapStringsSep "\n" builtins.readFile [
+    ../../../../codex/AGENTS.md
+    ../../../../agents/shared/code-comments.md
+    ../../../../agents/shared/command-privacy.md
+    ../../../../agents/shared/git-worktrees.md
+  ];
 
   settings = {
     model = "gpt-5.5";
@@ -24,11 +34,12 @@ let
 
     shell_environment_policy = {
       "inherit" = "all";
-      experimental_use_profile = false;
+      experimental_use_profile = true;
     };
 
     features = {
       goals = true;
+      js_repl = true;
       multi_agent = true;
       terminal_resize_reflow = true;
     };
@@ -41,20 +52,42 @@ let
   };
 in
 {
+  launchd.agents.codex-home = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+    enable = true;
+    config = {
+      ProgramArguments = [
+        "/bin/launchctl"
+        "setenv"
+        "CODEX_HOME"
+        codexHomeDir
+      ];
+      RunAtLoad = true;
+    };
+  };
+
   home = {
     packages = [ pkgs.llm-agents.codex ];
 
     sessionVariables = {
-      CODEX_HOME = codexConfigDir;
+      CODEX_HOME = codexHomeDir;
     };
 
-    activation.writeCodexConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      mkdir -p "${codexConfigDir}"
-      cp --no-preserve=mode,ownership ${tomlFormat.generate "codex-config" settings} "${codexConfigDir}/config.toml"
-      chmod 644 "${codexConfigDir}/config.toml"
+    activation.linkCodexXdgDir = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      if [ -e "${codexXdgDir}" ] && [ ! -L "${codexXdgDir}" ]; then
+        echo "Refusing to replace non-symlink ${codexXdgDir}" >&2
+        exit 1
+      fi
+
+      mkdir -p "${codexHomeDir}" "$(dirname "${codexXdgDir}")"
+      ln -sfn "${codexHomeDir}" "${codexXdgDir}"
     '';
 
-    file."${codexConfigDir}/AGENTS.md".source =
-      config.lib.file.mkOutOfStoreSymlink "${codexDotfilesDir}/AGENTS.md";
+    activation.writeCodexConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      mkdir -p "${codexHomeDir}"
+      cp --no-preserve=mode,ownership ${tomlFormat.generate "codex-config" settings} "${codexHomeDir}/config.toml"
+      chmod 644 "${codexHomeDir}/config.toml"
+    '';
+
+    file."${codexHomeDir}/AGENTS.md".text = agentsMdText;
   };
 }

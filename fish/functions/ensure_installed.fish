@@ -5,6 +5,6 @@ function ensure_installed -d "ensure the command is on PATH"
         return 0
     end
 
-    echo "command $cmd not found"
+    echo "command $cmd not found" >&2
     return 0
 end
