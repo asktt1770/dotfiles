@@ -169,6 +169,23 @@ sub_has_flag() {
   return 1
 }
 
+# True if any token after the subcommand is a short flag with an INLINE value,
+# e.g. `-cfoo` for `-c` (git accepts `git switch -cfoo` / `git checkout -bfoo`).
+# sub_has_flag only matches exact tokens and first_positional_after_sub skips
+# anything starting with `-`, so without this an inline-value create flag would
+# slip straight through to the allow branch — a guardrail bypass.
+sub_has_inline_short() {
+  local want j t
+  for want in "$@"; do
+    for ((j = SUB_IDX + 1; j < N; j++)); do
+      t="$(sq "${TOKENS[j]}")"
+      # `${want}?*` = the flag followed by at least one more character.
+      [[ $t == "${want}"?* ]] && return 0
+    done
+  done
+  return 1
+}
+
 case "$SUB" in
 # Integration and history-rewriting ops always mutate the checkout's tree/HEAD.
 merge | rebase | cherry-pick | am | apply | commit | revert)
@@ -195,6 +212,7 @@ stash)
 # can be returned to a safe state.
 switch)
   sub_has_flag -c -C --create && deny "git switch --create"
+  sub_has_inline_short -c -C && deny "git switch --create"
   case "$(first_positional_after_sub)" in
   "" | main | master) : ;; # no target or back-to-main -> allow
   *) deny "git switch <branch>" ;;
@@ -202,6 +220,7 @@ switch)
   ;;
 checkout)
   sub_has_flag -b -B --orphan && deny "git checkout -b"
+  sub_has_inline_short -b -B && deny "git checkout -b"
   case "$(first_positional_after_sub)" in
   "" | main | master) : ;; # no target or back-to-main -> allow
   *) deny "git checkout <branch/path>" ;;
