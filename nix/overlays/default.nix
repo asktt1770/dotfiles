@@ -11,6 +11,8 @@ let
     ./bluetooth-connector.nix
     ./roots.nix
     ./audio-priority-bar.nix
+    # Claude Code statusLine (PyPI: claude-statusbar, CLI `cs`)
+    ./claude-statusbar.nix
   ];
 
   # Apply each overlay and merge results

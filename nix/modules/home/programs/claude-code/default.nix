@@ -10,7 +10,7 @@ let
   claudeDotfilesDir = "${dotfilesDir}/claude";
 
   # Binary paths from Nix store
-  bun = lib.getExe pkgs.bun;
+  cs = lib.getExe pkgs.claude-statusbar;
   checkJsonschema = lib.getExe pkgs.check-jsonschema;
   jq = lib.getExe pkgs.jq;
   jsonFormat = pkgs.formats.json { };
@@ -31,7 +31,7 @@ let
     includeCoAuthoredBy = false;
     statusLine = {
       type = "command";
-      command = "${bun} $( ghq root )/github.com/ryoppippi/ccusage/apps/ccusage/src/index.ts statusline --cost-source both";
+      command = cs;
     };
     alwaysThinkingEnabled = true;
     autoMemoryEnabled = false;
