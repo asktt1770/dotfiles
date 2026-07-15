@@ -16,6 +16,7 @@
     # concatenation, so these are appended to whatever upstream ships).
     extraCasks = [
       "brave-browser"
+      "shortcat"
       "tailscale"
       "telegram"
     ];
