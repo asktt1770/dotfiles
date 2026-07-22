@@ -1,5 +1,7 @@
 {
-	"global": { "show_in_menu_bar": false },
+	"global": {
+		"show_in_menu_bar": false
+	},
 	"profiles": [
 		{
 			"complex_modifications": {
@@ -8,29 +10,32 @@
 						"description": "Exchange Enter and Shift+Enter on Claude Desktop",
 						"manipulators": [
 							{
-								"conditions": [
-									{
-										"bundle_identifiers": ["^com\\.anthropic\\.claudefordesktop$"],
-										"type": "frontmost_application_if"
-									}
-								],
+								"type": "basic",
 								"from": {
 									"key_code": "return_or_enter",
-									"modifiers": { "mandatory": ["shift"] }
+									"modifiers": {
+										"mandatory": ["shift"]
+									}
 								},
-								"to": [{ "key_code": "return_or_enter" }],
-								"type": "basic"
+								"to": [
+									{
+										"key_code": "return_or_enter"
+									}
+								],
+								"conditions": [
+									{
+										"type": "frontmost_application_if",
+										"bundle_identifiers": ["^com\\.anthropic\\.claudefordesktop$"]
+									}
+								]
 							},
 							{
-								"conditions": [
-									{
-										"bundle_identifiers": ["^com\\.anthropic\\.claudefordesktop$"],
-										"type": "frontmost_application_if"
-									}
-								],
+								"type": "basic",
 								"from": {
 									"key_code": "return_or_enter",
-									"modifiers": { "optional": ["caps_lock"] }
+									"modifiers": {
+										"optional": ["caps_lock"]
+									}
 								},
 								"to": [
 									{
@@ -38,7 +43,58 @@
 										"modifiers": ["left_shift"]
 									}
 								],
-								"type": "basic"
+								"conditions": [
+									{
+										"type": "frontmost_application_if",
+										"bundle_identifiers": ["^com\\.anthropic\\.claudefordesktop$"]
+									}
+								]
+							}
+						]
+					},
+					{
+						"description": "Exchange Enter and Shift+Enter on Telegram",
+						"manipulators": [
+							{
+								"type": "basic",
+								"from": {
+									"key_code": "return_or_enter",
+									"modifiers": {
+										"mandatory": ["shift"]
+									}
+								},
+								"to": [
+									{
+										"key_code": "return_or_enter"
+									}
+								],
+								"conditions": [
+									{
+										"type": "frontmost_application_if",
+										"bundle_identifiers": ["^ru\\.keepcoder\\.Telegram$"]
+									}
+								]
+							},
+							{
+								"type": "basic",
+								"from": {
+									"key_code": "return_or_enter",
+									"modifiers": {
+										"optional": ["caps_lock"]
+									}
+								},
+								"to": [
+									{
+										"key_code": "return_or_enter",
+										"modifiers": ["left_shift"]
+									}
+								],
+								"conditions": [
+									{
+										"type": "frontmost_application_if",
+										"bundle_identifiers": ["^ru\\.keepcoder\\.Telegram$"]
+									}
+								]
 							}
 						]
 					},
@@ -46,62 +102,85 @@
 						"description": "Tap CMD to toggle Kana/Eisuu",
 						"manipulators": [
 							{
-								"conditions": [
-									{
-										"identifiers": [
-											{
-												"product_id": 1,
-												"vendor_id": 22854
-											}
-										],
-										"type": "device_unless"
-									}
-								],
-								"description": "Tap left_command alone to switch to japanese_eisuu",
+								"type": "basic",
 								"from": {
 									"key_code": "left_command",
-									"modifiers": { "optional": ["any"] }
+									"modifiers": {
+										"optional": ["any"]
+									}
 								},
-								"parameters": { "basic.to_if_held_down_threshold_milliseconds": 100 },
 								"to": [
 									{
 										"key_code": "left_command",
 										"lazy": true
 									}
 								],
-								"to_if_alone": [{ "key_code": "japanese_eisuu" }],
-								"type": "basic"
-							},
-							{
+								"to_if_alone": [
+									{
+										"key_code": "japanese_eisuu"
+									}
+								],
+								"description": "Tap left_command alone to switch to japanese_eisuu",
+								"parameters": {
+									"basic.to_if_held_down_threshold_milliseconds": 100
+								},
 								"conditions": [
 									{
+										"type": "device_unless",
 										"identifiers": [
 											{
 												"product_id": 1,
 												"vendor_id": 22854
 											}
-										],
-										"type": "device_unless"
+										]
 									}
-								],
-								"description": "Tap right_command alone to switch to japanese_kana",
+								]
+							},
+							{
+								"type": "basic",
 								"from": {
 									"key_code": "right_command",
-									"modifiers": { "optional": ["any"] }
+									"modifiers": {
+										"optional": ["any"]
+									}
 								},
-								"parameters": { "basic.to_if_held_down_threshold_milliseconds": 100 },
 								"to": [
 									{
 										"key_code": "right_command",
 										"lazy": true
 									}
 								],
-								"to_if_alone": [{ "key_code": "japanese_kana" }],
-								"type": "basic"
+								"to_if_alone": [
+									{
+										"key_code": "japanese_kana"
+									}
+								],
+								"description": "Tap right_command alone to switch to japanese_kana",
+								"parameters": {
+									"basic.to_if_held_down_threshold_milliseconds": 100
+								},
+								"conditions": [
+									{
+										"type": "device_unless",
+										"identifiers": [
+											{
+												"product_id": 1,
+												"vendor_id": 22854
+											}
+										]
+									}
+								]
 							}
 						]
 					}
-				]
+				],
+				"parameters": {
+					"basic.to_if_alone_timeout_milliseconds": 1000,
+					"basic.to_if_held_down_threshold_milliseconds": 500,
+					"basic.to_delayed_action_delay_milliseconds": 500,
+					"basic.simultaneous_threshold_milliseconds": 50,
+					"mouse_motion_to_scroll.speed": 100
+				}
 			},
 			"devices": [
 				{
@@ -114,7 +193,9 @@
 				}
 			],
 			"name": "Default profile",
-			"virtual_hid_keyboard": { "keyboard_type_v2": "jis" }
+			"virtual_hid_keyboard": {
+				"keyboard_type_v2": "jis"
+			}
 		},
 		{
 			"complex_modifications": {
@@ -123,29 +204,32 @@
 						"description": "Exchange Enter and Shift+Enter on Claude Desktop",
 						"manipulators": [
 							{
-								"conditions": [
-									{
-										"bundle_identifiers": ["^com\\.anthropic\\.claudefordesktop$"],
-										"type": "frontmost_application_if"
-									}
-								],
+								"type": "basic",
 								"from": {
 									"key_code": "return_or_enter",
-									"modifiers": { "mandatory": ["shift"] }
+									"modifiers": {
+										"mandatory": ["shift"]
+									}
 								},
-								"to": [{ "key_code": "return_or_enter" }],
-								"type": "basic"
+								"to": [
+									{
+										"key_code": "return_or_enter"
+									}
+								],
+								"conditions": [
+									{
+										"type": "frontmost_application_if",
+										"bundle_identifiers": ["^com\\.anthropic\\.claudefordesktop$"]
+									}
+								]
 							},
 							{
-								"conditions": [
-									{
-										"bundle_identifiers": ["^com\\.anthropic\\.claudefordesktop$"],
-										"type": "frontmost_application_if"
-									}
-								],
+								"type": "basic",
 								"from": {
 									"key_code": "return_or_enter",
-									"modifiers": { "optional": ["caps_lock"] }
+									"modifiers": {
+										"optional": ["caps_lock"]
+									}
 								},
 								"to": [
 									{
@@ -153,7 +237,58 @@
 										"modifiers": ["left_shift"]
 									}
 								],
-								"type": "basic"
+								"conditions": [
+									{
+										"type": "frontmost_application_if",
+										"bundle_identifiers": ["^com\\.anthropic\\.claudefordesktop$"]
+									}
+								]
+							}
+						]
+					},
+					{
+						"description": "Exchange Enter and Shift+Enter on Telegram",
+						"manipulators": [
+							{
+								"type": "basic",
+								"from": {
+									"key_code": "return_or_enter",
+									"modifiers": {
+										"mandatory": ["shift"]
+									}
+								},
+								"to": [
+									{
+										"key_code": "return_or_enter"
+									}
+								],
+								"conditions": [
+									{
+										"type": "frontmost_application_if",
+										"bundle_identifiers": ["^ru\\.keepcoder\\.Telegram$"]
+									}
+								]
+							},
+							{
+								"type": "basic",
+								"from": {
+									"key_code": "return_or_enter",
+									"modifiers": {
+										"optional": ["caps_lock"]
+									}
+								},
+								"to": [
+									{
+										"key_code": "return_or_enter",
+										"modifiers": ["left_shift"]
+									}
+								],
+								"conditions": [
+									{
+										"type": "frontmost_application_if",
+										"bundle_identifiers": ["^ru\\.keepcoder\\.Telegram$"]
+									}
+								]
 							}
 						]
 					},
@@ -161,72 +296,99 @@
 						"description": "Tap CMD to toggle Kana/Eisuu",
 						"manipulators": [
 							{
-								"conditions": [
-									{
-										"identifiers": [
-											{
-												"product_id": 1,
-												"vendor_id": 22854
-											}
-										],
-										"type": "device_unless"
-									}
-								],
-								"description": "Tap left_command alone to switch to japanese_eisuu",
+								"type": "basic",
 								"from": {
 									"key_code": "left_command",
-									"modifiers": { "optional": ["any"] }
+									"modifiers": {
+										"optional": ["any"]
+									}
 								},
-								"parameters": { "basic.to_if_held_down_threshold_milliseconds": 100 },
 								"to": [
 									{
 										"key_code": "left_command",
 										"lazy": true
 									}
 								],
-								"to_if_alone": [{ "key_code": "japanese_eisuu" }],
-								"type": "basic"
-							},
-							{
+								"to_if_alone": [
+									{
+										"key_code": "japanese_eisuu"
+									}
+								],
+								"description": "Tap left_command alone to switch to japanese_eisuu",
+								"parameters": {
+									"basic.to_if_held_down_threshold_milliseconds": 100
+								},
 								"conditions": [
 									{
+										"type": "device_unless",
 										"identifiers": [
 											{
 												"product_id": 1,
 												"vendor_id": 22854
 											}
-										],
-										"type": "device_unless"
+										]
 									}
-								],
-								"description": "Tap right_command alone to switch to japanese_kana",
+								]
+							},
+							{
+								"type": "basic",
 								"from": {
 									"key_code": "right_command",
-									"modifiers": { "optional": ["any"] }
+									"modifiers": {
+										"optional": ["any"]
+									}
 								},
-								"parameters": { "basic.to_if_held_down_threshold_milliseconds": 100 },
 								"to": [
 									{
 										"key_code": "right_command",
 										"lazy": true
 									}
 								],
-								"to_if_alone": [{ "key_code": "japanese_kana" }],
-								"type": "basic"
+								"to_if_alone": [
+									{
+										"key_code": "japanese_kana"
+									}
+								],
+								"description": "Tap right_command alone to switch to japanese_kana",
+								"parameters": {
+									"basic.to_if_held_down_threshold_milliseconds": 100
+								},
+								"conditions": [
+									{
+										"type": "device_unless",
+										"identifiers": [
+											{
+												"product_id": 1,
+												"vendor_id": 22854
+											}
+										]
+									}
+								]
 							}
 						]
 					}
-				]
+				],
+				"parameters": {
+					"basic.to_if_alone_timeout_milliseconds": 1000,
+					"basic.to_if_held_down_threshold_milliseconds": 500,
+					"basic.to_delayed_action_delay_milliseconds": 500,
+					"basic.simultaneous_threshold_milliseconds": 50,
+					"mouse_motion_to_scroll.speed": 100
+				}
 			},
 			"devices": [
 				{
-					"identifiers": { "is_keyboard": true },
+					"identifiers": {
+						"is_keyboard": true
+					},
 					"ignore": true
 				}
 			],
 			"name": "Magic Keyboard(US)",
 			"selected": true,
-			"virtual_hid_keyboard": { "keyboard_type_v2": "ansi" }
+			"virtual_hid_keyboard": {
+				"keyboard_type_v2": "ansi"
+			}
 		}
 	]
 }
