@@ -9,6 +9,10 @@ const ifTelegram = k.ifApp({
 	bundle_identifiers: ['^ru\\.keepcoder\\.Telegram$'],
 });
 
+const ifDiscord = k.ifApp({
+	bundle_identifiers: ['^com\\.hnc\\.Discord$'],
+});
+
 const rules = [
 	k.rule('Exchange Enter and Shift+Enter on Claude Desktop', ifClaudeDesktop).manipulators([
 		k
@@ -26,6 +30,21 @@ const rules = [
 	]),
 
 	k.rule('Exchange Enter and Shift+Enter on Telegram', ifTelegram).manipulators([
+		k
+			.map({
+				key_code: 'return_or_enter',
+				modifiers: { mandatory: ['shift'] },
+			})
+			.to({ key_code: 'return_or_enter' }),
+		k
+			.map({
+				key_code: 'return_or_enter',
+				modifiers: { optional: ['caps_lock'] },
+			})
+			.to({ key_code: 'return_or_enter', modifiers: ['left_shift'] }),
+	]),
+
+	k.rule('Exchange Enter and Shift+Enter on Discord', ifDiscord).manipulators([
 		k
 			.map({
 				key_code: 'return_or_enter',
