@@ -6,24 +6,24 @@ return {
 		cond = not is_vscode(),
 		dependencies = {
 			"b0o/schemastore.nvim",
-			---@diagnostic disable-next-line: missing-fields
-			{
-				"ray-x/go.nvim",
-				dir = vim.env.GO_NVIM, -- Nix-provided pre-built plugin
-				dependencies = {
-					"ray-x/guihua.lua",
-					"nvim-treesitter/nvim-treesitter",
-					"neovim/nvim-lspconfig",
-				},
-			},
 		},
 		config = function()
+			-- Guard for Neovim < 0.12 so the config keeps working until the
+			-- 0.12 migration is applied via `nix run .#switch`
+			if vim.lsp.linked_editing_range then
+				vim.lsp.linked_editing_range.enable()
+			end
+
 			vim.lsp.config(
 				"*",
 				(function()
 					local opts = {}
 					opts.capabilities = vim.lsp.protocol.make_client_capabilities()
 					opts.capabilities.textDocument.completion.completionItem.snippetSupport = true
+					local ok, blink = pcall(require, "blink.cmp")
+					if ok then
+						opts.capabilities = blink.get_lsp_capabilities(opts.capabilities)
+					end
 					return opts
 				end)()
 			)
@@ -46,7 +46,7 @@ return {
 				"biome",
 				"eslint",
 				"oxlint",
-				"emmet_ls",
+				"emmet_language_server",
 				"tailwindcss",
 				"cssmodules_ls",
 				"unocss",
@@ -75,7 +75,6 @@ return {
 
 				-- misc
 				"typos_lsp",
-				"sqls",
 				"clojure_lsp",
 				"r_language_server",
 			})

@@ -21,8 +21,39 @@ return {
 		vim.api.nvim_create_user_command("Lazygit", function()
 			Snacks.lazygit()
 		end, { nargs = 0 })
+
+		-- Yank a permalink to the current line(s) instead of opening the
+		-- browser, matching the old `GinBrowse -n --permalink ++yank` habit
+		vim.api.nvim_create_user_command("GitBrowse", function(cmd)
+			Snacks.gitbrowse({
+				what = "permalink",
+				line_start = cmd.range > 0 and cmd.line1 or nil,
+				line_end = cmd.range > 0 and cmd.line2 or nil,
+				open = function(url)
+					vim.fn.setreg("+", url)
+					Snacks.notify(url, { title = "Yanked permalink" })
+				end,
+				notify = false,
+			})
+		end, { nargs = 0, range = true })
 	end,
 	keys = {
+		{ "gb", "GitBrowse", mode = "ca" },
+		{
+			"<c-z>",
+			function()
+				Snacks.terminal.toggle(nil, {
+					win = {
+						position = "float",
+						width = 0.8,
+						height = 0.8,
+						wo = { winblend = 20 },
+					},
+				})
+			end,
+			mode = { "n", "t" },
+			desc = "Toggle floating terminal",
+		},
 		-- Picker [[
 		{
 			",<cr>",
@@ -31,13 +62,13 @@ return {
 			end,
 			desc = "Picker Actions",
 		},
-		-- {
-		-- 	",,",
-		-- 	function()
-		-- 		Snacks.picker.smart()
-		-- 	end,
-		-- 	desc = "Smart Find Files",
-		-- },
+		{
+			",,",
+			function()
+				Snacks.picker.smart()
+			end,
+			desc = "Smart Find Files",
+		},
 		{
 			",<space>",
 			function()
@@ -147,13 +178,6 @@ return {
 				Snacks.picker.resume()
 			end,
 			desc = "Resume",
-		},
-		{
-			",t",
-			function()
-				Snacks.picker.todo_comments()
-			end,
-			desc = "TODO",
 		},
 		{
 			",i",

@@ -13,10 +13,10 @@ in
       fish
       tmux
       # VCS
-      bit
       git
       git-now
       git-wt
+      git-wtpr
       git-lfs
       ghq
       mergiraf

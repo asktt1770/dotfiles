@@ -12,12 +12,38 @@ let
   nvimConfigDir = "${config.xdg.configHome}/nvim";
 
   # Pre-built plugins by Nix
-  treesitterGrammars = pkgs.vimPlugins.nvim-treesitter.withAllGrammars;
-  telescopeFzfNative = pkgs.vimPlugins.telescope-fzf-native-nvim;
-  telescopeFzyNative = pkgs.vimPlugins.telescope-fzy-native-nvim;
-  sqlitePath = "${pkgs.sqlite.out}/lib/libsqlite3.dylib";
+  #
+  # nvim-treesitter's `withAllGrammars` ships no compiled `parser/*.so` on the
+  # main branch (it only carries the plugin source + `runtime/queries`), so
+  # loading it alone leaves every non-builtin language without a parser. Join
+  # the per-language `grammarPlugins` (each provides `parser/<lang>.so`) and
+  # graft the plugin's `runtime/queries` in as `queries/` so both the parsers
+  # and the matching highlight queries resolve from a single runtimepath entry.
+  treesitterGrammars = pkgs.symlinkJoin {
+    name = "nvim-treesitter-grammars-with-queries";
+    paths = builtins.attrValues pkgs.vimPlugins.nvim-treesitter.grammarPlugins;
+    postBuild = ''
+      ln -s ${pkgs.vimPlugins.nvim-treesitter}/runtime/queries $out/queries
+    '';
+  };
+  # Plugins served from the Nix store instead of lazy.nvim's git clones
+  #
+  # lazy2nix generates the plugin sources (see lazy2nix/default.nix); each
+  # plugin is linked into one farm whose entry names lazy.nvim's `dev.path`
+  # resolves directly. Plugins excluded in lazy2nix/config.json keep being
+  # cloned by lazy.nvim at the lazy-lock.json commit (`dev.fallback = true`
+  # on the Lua side). The farm must NOT be derived from lazy-lock.json:
+  # lazy.nvim drops dev-served plugins from the lock file on the next lock
+  # update, so keying the farm off the lock would unserve everything after
+  # one restore.
+  lazyNixPlugins = pkgs.linkFarm "lazy-nix-plugins" (import ./lazy2nix { inherit pkgs lib; }).plugins;
+
   bash = lib.getExe pkgs.bash;
-  nvim = lib.getExe pkgs.neovim;
+  # the wrapped neovim, NOT pkgs.neovim: the activation-time `Lazy! restore`
+  # needs the wrapper's LAZY_NIX_PLUGINS (otherwise lazy.nvim treats every
+  # Nix-served plugin as a missing git plugin, clones all of them at HEAD and
+  # rewrites lazy-lock.json) and the wrapper's extraPackages on PATH
+  nvim = lib.getExe config.programs.neovim.finalPackage;
 in
 {
   programs.neovim = {
@@ -34,29 +60,18 @@ in
       "TREESITTER_GRAMMARS"
       "${treesitterGrammars}"
       "--set"
-      "TELESCOPE_FZF_NATIVE"
-      "${telescopeFzfNative}"
-      "--set"
-      "TELESCOPE_FZY_NATIVE"
-      "${telescopeFzyNative}"
-      "--set"
-      "SQLITE_CLIB_PATH"
-      "${sqlitePath}"
+      "LAZY_NIX_PLUGINS"
+      "${lazyNixPlugins}"
     ];
 
     # These packages are only available when NeoVim is running
     extraPackages =
-      with pkgs;
-      [
-
-        # Pre-built plugins (to avoid build steps)
-        telescopeFzfNative # telescope-fzf-native.nvim pre-built by Nix
-        telescopeFzyNative # telescope-fzy-native.nvim pre-built by Nix
-      ]
       # buildNpmPackage packages (language servers from npm)
-      ++ lib.optionals (nodePackages != null) (
+      lib.optionals (nodePackages != null) (
         with nodePackages;
         [
+          cssmodules-language-server
+          gh-actions-language-server
           unocss-language-server
         ]
       )
@@ -64,13 +79,14 @@ in
 
         # Plugin build dependencies (lazy.nvim build steps)
         cmake # some plugins requiring cmake
+        tree-sitter # CLI needed by nvim-treesitter to install grammars absent from the Nix farm (e.g. moonbit)
 
         # Language servers
         lua-language-server # Lua LSP
         nixd # Nix LSP
         efm-langserver # General purpose LSP
-        pyright # Python LSP
         typos-lsp # Spell checker LSP
+        nushell # Nushell (`nu --lsp` language server)
 
         # Python tools
         ruff # Python linter/formatter with built-in language server
@@ -79,18 +95,17 @@ in
         stylua # Lua formatter
         hadolint # Dockerfile linter
         actionlint # GitHub Actions linter
+      ])
+      ++ (with pkgs; [
 
         # Node.js-based language servers
         astro-language-server # Astro
         emmet-language-server # Emmet
         prisma-language-server # Prisma
-        stylelint # CSS linter
-        stylelint-lsp # Stylelint LSP
         svelte-language-server # Svelte
         tailwindcss-language-server # Tailwind CSS
         textlint # Natural language linter
         vscode-langservers-extracted # HTML/CSS/JSON/ESLint
-        vue-language-server # Vue.js
         yaml-language-server # YAML
       ]);
 

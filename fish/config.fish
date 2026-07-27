@@ -125,7 +125,9 @@ if not test -f "$CONFIG_CACHE"; or test "$FISH_CONFIG" -nt "$CONFIG_CACHE"
     echo "set -gx PATH /opt/homebrew/opt/llvm/bin $PATH" >>$CONFIG_CACHE_TMP
 
     # xcode
-    echo "fish_add_path $(ensure_installed xcode-select -p)/usr/bin" >>$CONFIG_CACHE_TMP
+    # Append (and keep) Xcode's bin at the end of fish_user_paths so its
+    # bundled tools (git, etc.) never shadow the Nix/home-manager ones
+    echo "fish_add_path --append --move $(ensure_installed xcode-select -p)/usr/bin" >>$CONFIG_CACHE_TMP
     echo "set -gx SDKROOT $(ensure_installed xcrun --sdk macosx --show-sdk-path)" >>$CONFIG_CACHE_TMP
 
     # ruby
@@ -137,6 +139,7 @@ if not test -f "$CONFIG_CACHE"; or test "$FISH_CONFIG" -nt "$CONFIG_CACHE"
     ensure_installed zoxide init fish >>$CONFIG_CACHE_TMP
     ensure_installed tirith init --shell fish >>$CONFIG_CACHE_TMP
     ensure_installed git-wt --init fish >>$CONFIG_CACHE_TMP
+    ensure_installed git-wtpr --init fish >>$CONFIG_CACHE_TMP
     # starship init fish >>$CONFIG_CACHE_TMP
 
     # set vivid colors

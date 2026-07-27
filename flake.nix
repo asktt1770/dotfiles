@@ -15,9 +15,6 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
 
-    # Pin nixpkgs for Neovim 0.11.x — remove once ready to migrate to 0.12
-    nixpkgs-neovim.url = "github:nixos/nixpkgs/832efc09b4caf6b4569fbf9dc01bec3082a00611";
-
     flake-parts.url = "github:hercules-ci/flake-parts";
 
     nix-darwin = {
@@ -115,8 +112,6 @@
       flake = false;
     };
 
-    nix-filter.url = "github:numtide/nix-filter";
-
   };
 
   outputs =
@@ -124,7 +119,6 @@
       self,
       flake-parts,
       nixpkgs,
-      nixpkgs-neovim,
       nix-darwin,
       nix-homebrew,
       home-manager,
@@ -143,7 +137,6 @@
       agent-browser-skill,
       tgrab-skill,
       cmux-skill,
-      nix-filter,
       ...
     }:
     let
@@ -154,9 +147,9 @@
       darwinHomedir = "/Users/${username}";
       linuxHomedir = "/home/${username}";
 
-      local-skills = nix-filter {
-        root = self;
-        include = [ "agents/skills" ];
+      local-skills = nixpkgs.lib.fileset.toSource {
+        root = ./.;
+        fileset = ./agents/skills;
       };
 
       # Create pkgs with overlays
@@ -169,7 +162,7 @@
           inherit system;
           config.allowUnfree = true;
           overlays = [
-            llm-agents.overlays.default
+            llm-agents.overlays.shared-nixpkgs
             (_final: _prev: {
               _nix-claude-code = nix-claude-code;
             })
@@ -177,10 +170,6 @@
             gh-nippou.overlays.default
             gh-graph.overlays.default
             (import ./nix/overlays/default.nix)
-            # Pin Neovim 0.11.x — remove once ready to migrate to 0.12
-            (_final: _prev: {
-              neovim-unwrapped = (import nixpkgs-neovim { inherit system; }).neovim-unwrapped;
-            })
           ]
           ++ nixpkgs.lib.optionals isDarwin [
             brew-nix.overlays.default
@@ -483,6 +472,25 @@
                   echo "Updating AI tools inputs..."
                   nix flake update llm-agents
                   echo "Done! Run 'nix run .#switch' to apply changes."
+                ''
+              );
+            };
+
+            # Regenerate the Nix-served lazy.nvim plugin sources from the
+            # runtime plugin table and lazy-lock.json. Runs against the
+            # working tree (not the store copy) because it writes the
+            # generated files back into the repository.
+            lazy2nix = {
+              type = "app";
+              program = toString (
+                localPkgs.writeShellScript "lazy2nix" ''
+                  set -e
+                  : "''${DOTFILES_DIR:=${homedir}/ghq/github.com/${username}/dotfiles}"
+                  if [ ! -d "$DOTFILES_DIR" ]; then
+                    DOTFILES_DIR="$(pwd)"
+                  fi
+                  export PATH=${localPkgs.bun}/bin:$PATH
+                  exec bun run "$DOTFILES_DIR/nix/modules/home/programs/neovim/lazy2nix/generate.ts"
                 ''
               );
             };

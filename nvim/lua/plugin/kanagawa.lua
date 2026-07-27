@@ -34,24 +34,6 @@ return {
 					SatelliteBar = { bg = theme.ui.special },
 					-- }}
 
-					-- Telescope {{
-					TelescopeTitle = { fg = theme.ui.special, bold = true },
-					TelescopePromptNormal = { bg = theme.ui.bg_p1 },
-					TelescopePromptBorder = { fg = theme.ui.bg_p1, bg = theme.ui.bg_p1 },
-					TelescopeResultsNormal = { fg = theme.ui.fg_dim, bg = theme.ui.bg_m1 },
-					TelescopeResultsBorder = { fg = theme.ui.bg_m1, bg = theme.ui.bg_m1 },
-					TelescopePreviewNormal = { bg = theme.ui.bg_dim },
-					TelescopePreviewBorder = { bg = theme.ui.bg_dim, fg = theme.ui.bg_dim },
-					-- }}
-					-- RainbowDelimiter {{
-					RainbowDelimiterRed = { fg = theme.syn.preproc },
-					RainbowDelimiterYellow = { fg = theme.syn.special2 },
-					RainbowDelimiterBlue = { fg = theme.syn.fun },
-					RainbowDelimiterOrange = { fg = theme.syn.number },
-					RainbowDelimiterGreen = { fg = theme.syn.string },
-					RainbowDelimiterViolet = { fg = theme.syn.statement },
-					RainbowDelimiterCyan = { fg = theme.syn.type },
-					-- }}
 					-- Copilot {{
 					CopilotAnnotation = { bg = theme.ui.bg_p1, italic = true },
 					CopilotSuggestion = { bg = theme.ui.bg_p2, italic = true },

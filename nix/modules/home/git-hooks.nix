@@ -24,6 +24,22 @@
       exit 0
     fi
 
+    # Regenerate the Nix-served plugin sources when plugin specs change.
+    # A failure (e.g. offline prefetch) only warns: unmapped plugins keep
+    # working through lazy.nvim's dev.fallback until the next generation.
+    LAZY2NIX_DIR="nix/modules/home/programs/neovim/lazy2nix"
+    if echo "$STAGED_FILES" | grep -qE "^(nvim/lua/plugin/|nvim/lazy-lock\.json|$LAZY2NIX_DIR/(config\.json|generate\.ts|dump\.lua))"; then
+      echo "Neovim plugin specs changed. Regenerating lazy2nix sources..."
+      if nix run .#lazy2nix; then
+        git add "$LAZY2NIX_DIR/nixpkgs-plugins.nix" "$LAZY2NIX_DIR/pinned-plugins.json"
+        STAGED_FILES="$STAGED_FILES
+    $LAZY2NIX_DIR/nixpkgs-plugins.nix
+    $LAZY2NIX_DIR/pinned-plugins.json"
+      else
+        echo "warning: lazy2nix failed; run 'nix run .#lazy2nix' manually" >&2
+      fi
+    fi
+
     echo "Running treefmt on staged files..."
 
     # Stash unstaged changes so treefmt only sees staged content,
@@ -78,7 +94,7 @@
 
     if git diff HEAD^..HEAD --name-only 2>/dev/null | grep -qE '^typewhisper/dictionary\.json'; then
       echo "TypeWhisper dictionary changed. Syncing..."
-      ./typewhisper/dict-sync.ts || true
+      ./typewhisper/dict-sync.nu || true
     fi
     HOOK_EOF
           chmod +x "$DOTFILES_DIR/.git/hooks/post-commit"
@@ -106,7 +122,7 @@
 
     if git diff HEAD@{1}..HEAD --name-only 2>/dev/null | grep -qE '^typewhisper/dictionary\.json'; then
       echo "TypeWhisper dictionary changed. Syncing..."
-      ./typewhisper/dict-sync.ts || true
+      ./typewhisper/dict-sync.nu || true
     fi
     HOOK_EOF
           chmod +x "$DOTFILES_DIR/.git/hooks/post-checkout"
@@ -122,7 +138,7 @@
 
     if git diff HEAD@{1}..HEAD --name-only 2>/dev/null | grep -qE '^typewhisper/dictionary\.json'; then
       echo "TypeWhisper dictionary changed. Syncing..."
-      ./typewhisper/dict-sync.ts || true
+      ./typewhisper/dict-sync.nu || true
     fi
     HOOK_EOF
           chmod +x "$DOTFILES_DIR/.git/hooks/post-merge"
@@ -145,7 +161,7 @@
 
     if git diff ORIG_HEAD..HEAD --name-only 2>/dev/null | grep -qE '^typewhisper/dictionary\.json'; then
       echo "TypeWhisper dictionary changed after rebase. Syncing..."
-      ./typewhisper/dict-sync.ts || true
+      ./typewhisper/dict-sync.nu || true
     fi
     HOOK_EOF
           chmod +x "$DOTFILES_DIR/.git/hooks/post-rewrite"

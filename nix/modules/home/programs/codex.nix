@@ -22,11 +22,11 @@ let
   ];
 
   settings = {
-    model = "gpt-5.5";
+    model = "gpt-5.6-sol";
     approval_policy = "on-request";
     approvals_reviewer = "auto_review";
     allow_login_shell = true;
-    model_reasoning_effort = "high";
+    model_reasoning_effort = "medium";
     web_search_request = true;
     personality = "pragmatic";
     service_tier = "standard"; # "standard" or "fast"
