@@ -67,6 +67,12 @@
 
     ./hunk.nix
 
+    # Java (OpenJDK with JAVA_HOME)
+    ./java.nix
+
+    # nh: Nix helper CLI with automatic periodic cleanup
+    ./nh.nix
+
     # Neovim configuration
     (import ./neovim {
       inherit

@@ -61,7 +61,6 @@ abbr -a pbc pbcopy
 abbr -a pbp pbpaste
 
 # git configs
-type -q bit && alias git bit
 abbr -a g git
 abbr -a ga 'git add'
 abbr -a ga. 'git add .'
@@ -86,6 +85,7 @@ abbr -a gsm "command git switch main 2>/dev/null || command git switch master"
 abbr -a gpt 'git push --tags'
 abbr -a gr 'git rebase'
 abbr -a gwt 'git wt'
+abbr -a gwtpr 'git wtpr'
 # git abbreviations using --command option (fish 4.0+)
 abbr -a -c git a add # Stage files
 abbr -a -c git aa add -a # Stage all modified files
@@ -150,7 +150,7 @@ abbr -a clc claude --continue
 abbr -a clh claude --dangerously-skip-permissions --model haiku
 abbr -a clo claude --model opus
 abbr -a cls claude --model sonnet
-abbr -a cls1 claude --model sonnet[1m]
+abbr -a clf claude --model fable
 abbr -a oc opencode
 abbr -a cx codex
 abbr -a ca cursor-agent

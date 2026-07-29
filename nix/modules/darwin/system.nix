@@ -27,14 +27,6 @@ in
   system.tools.darwin-uninstaller.enable = false;
 
   nix = {
-    gc = {
-      automatic = true;
-      interval = {
-        Hour = 12;
-        Minute = 0;
-      };
-      options = "--delete-older-than 7d";
-    };
     settings = {
       extra-experimental-features = [
         "nix-command"
@@ -220,6 +212,7 @@ in
         };
         "com.apple.dock" = {
           appswitcher-all-displays = true; # Show app switcher on all displays
+          wvous-br-corner = 1;
         };
       };
     };
@@ -297,6 +290,7 @@ in
     ];
 
     masApps = {
+      "1Password for Safari" = 1569813296;
       "Accelerate" = 1459809092;
       "Actions" = 1586435171;
       "AdGuard for Safari" = 1440147259;
