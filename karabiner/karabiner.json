@@ -145,6 +145,52 @@
 						]
 					},
 					{
+						"description": "Exchange Enter and Shift+Enter on LINE",
+						"manipulators": [
+							{
+								"type": "basic",
+								"from": {
+									"key_code": "return_or_enter",
+									"modifiers": {
+										"mandatory": ["shift"]
+									}
+								},
+								"to": [
+									{
+										"key_code": "return_or_enter"
+									}
+								],
+								"conditions": [
+									{
+										"type": "frontmost_application_if",
+										"bundle_identifiers": ["^jp\\.naver\\.line\\.mac$"]
+									}
+								]
+							},
+							{
+								"type": "basic",
+								"from": {
+									"key_code": "return_or_enter",
+									"modifiers": {
+										"optional": ["caps_lock"]
+									}
+								},
+								"to": [
+									{
+										"key_code": "return_or_enter",
+										"modifiers": ["left_shift"]
+									}
+								],
+								"conditions": [
+									{
+										"type": "frontmost_application_if",
+										"bundle_identifiers": ["^jp\\.naver\\.line\\.mac$"]
+									}
+								]
+							}
+						]
+					},
+					{
 						"description": "Tap CMD to toggle Kana/Eisuu",
 						"manipulators": [
 							{
@@ -379,6 +425,52 @@
 									{
 										"type": "frontmost_application_if",
 										"bundle_identifiers": ["^com\\.hnc\\.Discord$"]
+									}
+								]
+							}
+						]
+					},
+					{
+						"description": "Exchange Enter and Shift+Enter on LINE",
+						"manipulators": [
+							{
+								"type": "basic",
+								"from": {
+									"key_code": "return_or_enter",
+									"modifiers": {
+										"mandatory": ["shift"]
+									}
+								},
+								"to": [
+									{
+										"key_code": "return_or_enter"
+									}
+								],
+								"conditions": [
+									{
+										"type": "frontmost_application_if",
+										"bundle_identifiers": ["^jp\\.naver\\.line\\.mac$"]
+									}
+								]
+							},
+							{
+								"type": "basic",
+								"from": {
+									"key_code": "return_or_enter",
+									"modifiers": {
+										"optional": ["caps_lock"]
+									}
+								},
+								"to": [
+									{
+										"key_code": "return_or_enter",
+										"modifiers": ["left_shift"]
+									}
+								],
+								"conditions": [
+									{
+										"type": "frontmost_application_if",
+										"bundle_identifiers": ["^jp\\.naver\\.line\\.mac$"]
 									}
 								]
 							}
