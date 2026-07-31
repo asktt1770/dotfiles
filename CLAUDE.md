@@ -55,6 +55,40 @@ nix run .#build                # Test build
 - Use **Conventional Commits** with UK English spelling
 - Commits are GPG-signed with SSH
 
+## GitHub Actions: Bot Workflows Are Disabled
+
+The five `Bot: *` workflows are **disabled via the GitHub API**, not via the
+workflow files. Nothing in `.github/workflows/` reflects this, so check with
+`gh workflow list --all` before assuming they run.
+
+| Workflow                     | State               |
+| ---------------------------- | ------------------- |
+| `update-flake-frequent.yaml` | `disabled_manually` |
+| `update-flake.yaml`          | `disabled_manually` |
+| `auto-rebase.yaml`           | `disabled_manually` |
+| `update-overlays.yaml`       | `disabled_manually` |
+| `update-node-packages.yaml`  | `disabled_manually` |
+
+They inherit upstream's `RYOPPIPPI_NIX_UPDATER_APP_*` secrets, which this fork
+does not have, so every scheduled run failed — `update-flake-*` at startup
+(their reusable workflow marks the secrets `required: true`) and the rest at the
+`setup-git-bot` step. Disabling them GitHub-side rather than editing the YAML
+keeps the `.github/` diff against upstream minimal, so upstream syncs stay
+conflict-free.
+
+Dependency freshness is covered by periodic upstream merges (upstream's own bots
+keep `flake.lock` current) plus `nix run .#update` / `nix run .#update-ai-tools`
+on demand. Only `gh-graph` is fork-only and therefore never updated by upstream.
+
+Reviving them needs three things: a GitHub App with its secrets set on this
+fork, `gh workflow enable`, and a fix for the hardcoded
+`darwinConfigurations.ryoppippi` build target in `update-overlays.yaml` and
+`update-node-packages.yaml` — `flake.nix` defines
+`darwinConfigurations.${username}`, whose value comes from `personal.nix`.
+
+Note that upstream renaming a workflow file resurfaces it as a new, active
+workflow — re-check `gh workflow list --all` after a large sync.
+
 ## Worktree Workflow
 
 When starting actual implementation work (not consultation or research), work
