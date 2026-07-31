@@ -123,37 +123,44 @@ fzf + delta で Git 操作を対話的に選ぶプラグイン。abbr はプラ�
 
 #### fzf 画面内キーバインド
 
-| キー                                   | 動作                                    |
-| -------------------------------------- | --------------------------------------- |
-| `Enter`                                | 選択項目を delta で全画面表示           |
-| `?`                                    | プレビュー表示/非表示                   |
-| `Alt-j` / `Alt-k`（`Alt-n` / `Alt-p`） | プレビューをスクロール                  |
-| `Alt-w`                                | プレビューの折り返し切替                |
-| `Alt-e`                                | `gd` でそのファイルをエディタで開く     |
-| `Ctrl-s` / `Ctrl-r`                    | ソート切替 / 全選択トグル（複数選択時） |
-| `Ctrl-y`                               | `glo` でコミット SHA をコピー           |
-| `Esc` / `Ctrl-c`                       | 終了（exit 0 扱い）                     |
+| キー                                   | 動作                                                             |
+| -------------------------------------- | ---------------------------------------------------------------- |
+| `Enter`                                | 決定（ビューア系は delta で全画面表示 / 選択系はその操作を実行） |
+| `?`                                    | プレビュー表示/非表示                                            |
+| `Alt-j` / `Alt-k`（`Alt-n` / `Alt-p`） | プレビューをスクロール                                           |
+| `Alt-w`                                | プレビューの折り返し切替                                         |
+| `Alt-e`                                | `gd` でそのファイルをエディタで開く                              |
+| `Ctrl-s` / `Ctrl-r`                    | ソート切替 / 全選択トグル（複数選択時）                          |
+| `Ctrl-y`                               | `glo` でコミット SHA をコピー                                    |
+| `Esc` / `Ctrl-c`                       | 終了（exit 0 扱い）                                              |
 
 #### PR の差分を見る
 
 `gd` は先頭 1〜2 引数を revision として解釈し（内部で `git rev-parse` 判定）、残りをパス扱いする。
 
 ```fish
-gd main...                        # PRブランチ上で。GitHubの "Files changed" と一致
-gd origin/main...HEAD             # リモート追跡ブランチ基準
+git fetch origin                  # 先に base を最新化しておく
+gd origin/main...HEAD             # 基本はこれ。GitHubの "Files changed" と一致
 gd @{u}...HEAD                    # 上流ブランチ基準
 gd origin/main...HEAD nix/modules # パス絞り込み（`--` は付けない。パス扱いで壊れる）
-glo main...HEAD                   # PRに含まれるコミットを一覧
+glo origin/main..HEAD             # PR側のコミットだけ一覧（log は二点。理由は下記）
 ```
 
 > **`...`（三点）を使う。** `gd origin/main HEAD` のような2引数指定は `git diff A B` の二点 diff になり、
 > 分岐後に main 側へ入ったコミットまで差分に混ざる。GitHub の PR ビューはマージベース基準の三点 diff。
+>
+> **base は `origin/main` を使う。** `gd main...` はローカル `main` が PR の base と同一コミットのときしか
+> 一致しない。ローカルが古いとマージベースがずれて余計な差分が出る。base が `main` 以外の PR なら
+> そのブランチ名に置き換える。
+>
+> **`glo` は二点。** `git log` の三点 `A...B` は対称差なので base 側のコミットまで並ぶ。
+> PR 側だけ見たいなら `origin/main..HEAD`（または `glo --right-only origin/main...HEAD`）。
 
 未チェックアウトの PR は worktree を切ってから見る:
 
 ```fish
 git wtpr <PR番号 or URL>  # PR用 worktree を作って移動
-gd main...
+gd origin/main...HEAD
 ```
 
 ### Git サブコマンド短縮（`git ` の後に入力 / fish 4.0+ `-c`）
