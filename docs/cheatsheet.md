@@ -83,6 +83,86 @@
 | `gwt`                | `git wt`                                         | **worktree 管理**（カスタムコマンド） |
 | `lzg` / `lzd`        | `lazygit` / `lazydocker`                         | TUIクライアント                       |
 
+### forgit（fzf 対話 Git）
+
+出典: `nix/modules/home/programs/fish/default.nix`（`pkgs.fishPlugins.forgit`）
+上書き判定は `fish/config/abbrs_aliases.fish` との突き合わせ。
+
+fzf + delta で Git 操作を対話的に選ぶプラグイン。abbr はプラグイン側が自動登録するので
+`abbrs_aliases.fish` を読んでも出てこない = **上の表に載っていない Git 短縮がまだある**。
+
+> **`git forgit <cmd>` は動かない。** 本体は fish 関数 `git-forgit` としてのみ定義され PATH に実体がないため、
+> git サブコマンド経由は失敗する。abbr か `git-forgit <cmd>` を直接使う。
+
+| 短縮                  | 対話操作                                            |
+| --------------------- | --------------------------------------------------- |
+| `gd`                  | **diff ビューア**（引数に revision を取れる。下記） |
+| `glo` / `grl`         | log / reflog ビューア（`Ctrl-y` で SHA コピー）     |
+| `gso`                 | show ビューア                                       |
+| `gbl`                 | blame                                               |
+| `grh` / `grs`         | `reset HEAD <file>` / `restore <file>` 選択         |
+| `gcf` / `gcff`        | checkout file / checkout file from commit           |
+| `gcb` / `gbd`         | checkout branch / `branch -D`                       |
+| `gct` / `grc`         | checkout tag / revert commit                        |
+| `gss` / `gsp`         | stash 表示 / stash push                             |
+| `gcp`                 | cherry-pick                                         |
+| `grb`                 | `rebase -i` 対象コミット選択                        |
+| `gfu` / `gsq` / `grw` | fixup / squash / reword（いずれも autosquash 込み） |
+| `gclean`              | `git clean` 対象選択                                |
+| `gwa` / `gwd`         | worktree add / remove                               |
+| `gi` / `gat`          | `.gitignore` / `.gitattributes` ジェネレータ        |
+
+**自前 abbr が勝っていて forgit 版が呼べないもの**（フルで打つ必要あり）:
+
+| 短縮  | 実際の展開     | 潰された forgit 版           |
+| ----- | -------------- | ---------------------------- |
+| `ga`  | `git add`      | `git-forgit add`             |
+| `gco` | `git checkout` | `git-forgit checkout_commit` |
+| `gsw` | `git switch`   | `git-forgit switch_branch`   |
+| `gwt` | `git wt`       | `forgit::worktree`           |
+
+#### fzf 画面内キーバインド
+
+| キー                                   | 動作                                                             |
+| -------------------------------------- | ---------------------------------------------------------------- |
+| `Enter`                                | 決定（ビューア系は delta で全画面表示 / 選択系はその操作を実行） |
+| `?`                                    | プレビュー表示/非表示                                            |
+| `Alt-j` / `Alt-k`（`Alt-n` / `Alt-p`） | プレビューをスクロール                                           |
+| `Alt-w`                                | プレビューの折り返し切替                                         |
+| `Alt-e`                                | `gd` でそのファイルをエディタで開く                              |
+| `Ctrl-s` / `Ctrl-r`                    | ソート切替 / 全選択トグル（複数選択時）                          |
+| `Ctrl-y`                               | `glo` でコミット SHA をコピー                                    |
+| `Esc` / `Ctrl-c`                       | 終了（exit 0 扱い）                                              |
+
+#### PR の差分を見る
+
+`gd` は先頭 1〜2 引数を revision として解釈し（内部で `git rev-parse` 判定）、残りをパス扱いする。
+
+```fish
+git fetch origin                  # 先に base を最新化しておく
+gd origin/main...HEAD             # 基本はこれ。GitHubの "Files changed" と一致
+gd @{u}...HEAD                    # 上流ブランチ基準
+gd origin/main...HEAD nix/modules # パス絞り込み（`--` は付けない。パス扱いで壊れる）
+glo origin/main..HEAD             # PR側のコミットだけ一覧（log は二点。理由は下記）
+```
+
+> **`...`（三点）を使う。** `gd origin/main HEAD` のような2引数指定は `git diff A B` の二点 diff になり、
+> 分岐後に main 側へ入ったコミットまで差分に混ざる。GitHub の PR ビューはマージベース基準の三点 diff。
+>
+> **base は `origin/main` を使う。** `gd main...` はローカル `main` が PR の base と同一コミットのときしか
+> 一致しない。ローカルが古いとマージベースがずれて余計な差分が出る。base が `main` 以外の PR なら
+> そのブランチ名に置き換える。
+>
+> **`glo` は二点。** `git log` の三点 `A...B` は対称差なので base 側のコミットまで並ぶ。
+> PR 側だけ見たいなら `origin/main..HEAD`（または `glo --right-only origin/main...HEAD`）。
+
+未チェックアウトの PR は worktree を切ってから見る:
+
+```fish
+git wtpr <PR番号 or URL>  # PR用 worktree を作って移動
+gd origin/main...HEAD
+```
+
 ### Git サブコマンド短縮（`git ` の後に入力 / fish 4.0+ `-c`）
 
 | 短縮                    | 展開                                                             | 説明                           |
