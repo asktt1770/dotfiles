@@ -83,7 +83,8 @@ on demand. Only `gh-graph` is fork-only and therefore never updated by upstream.
 Reviving them needs three things: a GitHub App with its secrets set on this
 fork, `gh workflow enable`, and a fix for the hardcoded
 `darwinConfigurations.ryoppippi` build target in `update-overlays.yaml` and
-`update-node-packages.yaml` (this fork defines `darwinConfigurations.asktt1770`).
+`update-node-packages.yaml` — `flake.nix` defines
+`darwinConfigurations.${username}`, whose value comes from `personal.nix`.
 
 Note that upstream renaming a workflow file resurfaces it as a new, active
 workflow — re-check `gh workflow list --all` after a large sync.
