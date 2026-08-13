@@ -11,10 +11,14 @@ See @README.md for full documentation.
 ## Core Commands
 
 ```bash
-git add . && nix run .#switch  # Apply changes
-nix run .#update               # Update dependencies
-nix run .#build                # Test build
+git add <changed paths> && nix run .#switch  # Apply changes
+nix run .#update                             # Update dependencies
+nix run .#build                              # Test build
 ```
+
+Nix flakes only see tracked, staged files, so `git add` is required before
+`switch`. Stage the paths you changed — never `git add -A`, `git add .`, or
+`git add -u`. That staging is a build prerequisite, not a commit plan.
 
 ## Command Privacy and Secret Handling
 
@@ -48,10 +52,17 @@ nix run .#build                # Test build
 | Git     | `nix/modules/home/programs/git/`        | Declarative via Home Manager     |
 | Ghostty | `nix/modules/home/programs/ghostty.nix` | Declarative                      |
 
+## Scripting Language Choice
+
+- **Nushell** — the default for any new script. Use the `nushell` skill.
+- **Bun Shell or Python** — needs libraries.
+- **Bash** — the environment is not ours: Nix build phases, `writeShellApplication`, bootstrap, git hooks.
+- **Fish** — interactive config only (`fish/functions/`, abbreviations, completions), never a new script.
+
 ## Git Workflow
 
 - **Main branch**: `main`
-- This is a personal dotfiles repo — **committing and pushing directly to `main` is fine**. Do NOT open a pull request unless explicitly asked.
+- This is a personal dotfiles repo — **committing and pushing directly to `main` is fine**. This is an explicit exception to the global commit skill's main-branch rule. Do NOT open a pull request unless explicitly asked.
 - Use **Conventional Commits** with UK English spelling
 - Commits are GPG-signed with SSH
 
@@ -115,27 +126,30 @@ Claude Code skills are managed via [agent-skills-nix](https://github.com/Kyure-A
 
 Configuration: `nix/modules/home/agent-skills.nix`
 
+External skill repositories are pinned in `registry/sources/`, not as flake inputs.
+
 ### Adding a new external skill
 
-1. Add flake input in `flake.nix`:
+1. Add a pin manifest `registry/sources/my-skill.nix`:
    ```nix
-   my-skill = {
-     url = "github:owner/repo";
-     flake = false;
-   };
-   ```
-2. Add source in `agent-skills.nix`:
-   ```nix
-   sources.my-skill = {
-     path = my-skill;
+   {
+     pin = {
+       type = "github";
+       owner = "owner";
+       repo = "repo";
+       branch = "main";
+     };
+
      subdir = "path/to/skills";
-   };
+     idPrefix = "my-skill";
+     filter.maxDepth = 1;
+   }
    ```
-3. Enable the skill:
-   ```nix
-   skills.enable = [ "skill-id" ];
-   ```
-4. Run `git add . && nix run .#switch`
+2. Resolve the pin: `nix run .#skills-sources-lock`
+3. Select the skill in `agent-skills.nix` — `skills.explicit.<id>` when it needs
+   `packages` or a `transform`, otherwise add its prefixed catalog ID to
+   `skills.enable`
+4. Run `git add registry/ nix/modules/home/agent-skills.nix && nix run .#switch`
 
 ### Adding a local skill
 
@@ -144,20 +158,19 @@ Create a new skill directory in `agents/skills/` with a `SKILL.md` file, then en
 ### Updating external skills
 
 ```bash
-nix flake update ast-grep-skill  # Update specific skill
-nix run .#switch                  # Apply changes
+nix run .#skills-sources-lock  # Re-resolve every pin in registry/sources/
+nix run .#switch               # Apply changes
 ```
+
+Editing a manifest without regenerating the lock fails evaluation, so the two always stay in sync.
 
 ### Current skills
 
-**External:**
-
-- **ast-grep**: [ast-grep/claude-skill](https://github.com/ast-grep/claude-skill)
+**External:** one manifest per repository in `registry/sources/`.
 
 **Local (in `agents/skills/`):**
 
-- git-commit-crafter
-- pr-workflow-manager
+All directories under `agents/skills/` are enabled automatically.
 
 ## System Info
 

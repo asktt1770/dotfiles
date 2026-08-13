@@ -28,7 +28,6 @@ in
     ]
     # brew-nix packages (Homebrew casks managed via Nix)
     ++ (with pkgs.brewCasks; [
-      alt-tab
       appcleaner
       beekeeper-studio
       betterdisplay
@@ -40,7 +39,6 @@ in
       maestral
       obs
       signal
-      stats
       vlc
       zed
       zoom
@@ -50,7 +48,7 @@ in
       (pkgs.brewCasks.suspicious-package.overrideAttrs (oldAttrs: {
         src = pkgs.fetchurl {
           url = builtins.head oldAttrs.src.urls;
-          hash = "sha256-m80cgWlFj6TjcMHy6mwvmOzW26/pz6cfn84DKg0bV7w=";
+          hash = "sha256-W4IVt6ZTbR1B8aNIXjQos5+NPQ8kcasaDGm+2yLfTls=";
         };
       }))
     ];
@@ -58,7 +56,6 @@ in
   launchd.agents = {
     bluesnooze = mkLoginAgent pkgs.brewCasks.bluesnooze "Bluesnooze";
     is-there-net = mkLoginAgent pkgs.brewCasks.istherenet "IsThereNet";
-    stats = mkLoginAgent pkgs.brewCasks.stats "Stats";
   };
 
 }
