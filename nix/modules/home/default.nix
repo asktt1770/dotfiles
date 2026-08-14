@@ -7,10 +7,9 @@
   system ? null,
   nodePackages ? null,
   fish-na ? null,
-  ast-grep-skill ? null,
-  agent-browser-skill ? null,
-  tgrab-skill ? null,
-  cmux-skill ? null,
+  agentSkillsLib ? null,
+  skillRegistry ? null,
+  tgrab ? null,
   local-skills ? null,
   ...
 }:
@@ -25,7 +24,7 @@ in
 
     # Git hooks for auto-switching nix config and treefmt on pre-commit
     (import ./git-hooks.nix {
-      inherit lib dotfilesDir;
+      inherit pkgs lib dotfilesDir;
     })
 
     # Agent skills for Claude Code (skills from flake inputs)
@@ -33,10 +32,9 @@ in
       inherit
         pkgs
         lib
-        ast-grep-skill
-        agent-browser-skill
-        tgrab-skill
-        cmux-skill
+        agentSkillsLib
+        skillRegistry
+        tgrab
         local-skills
         config
         ;

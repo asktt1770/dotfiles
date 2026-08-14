@@ -4,7 +4,7 @@ Shared skills for AI agents (Claude Code, Codex, etc.) managed via [agent-skills
 
 ## Shared Instructions (`shared/`)
 
-`agents/shared/*.md` is the single source of truth for instruction sections used by multiple agents (Code Comments Policy, Command Privacy, Git Worktrees):
+`agents/shared/*.md` is the single source of truth for instruction sections used by multiple agents (Code Comments Policy, Command Privacy, Git Worktrees, Delegating Work):
 
 - **Claude Code**: `claude/CLAUDE.md` imports them via `@~/.config/claude/shared/*.md` (symlinked by `nix/modules/home/programs/claude-code/default.nix`)
 - **Codex**: `~/.codex/AGENTS.md` is generated at switch time by concatenating `codex/AGENTS.md` with these fragments (`nix/modules/home/programs/codex.nix`)
@@ -25,7 +25,7 @@ Skills are configured in `nix/modules/home/agent-skills.nix` and deployed to:
    ```nix
    skills.enable = [ "my-skill" ];
    ```
-3. Run `git add . && nix run .#switch`
+3. Run `git add skills/<my-skill> ../nix/modules/home/agent-skills.nix && nix run .#switch`
 
 ## Skill Design Guidelines
 

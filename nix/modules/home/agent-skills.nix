@@ -7,46 +7,43 @@
   pkgs,
   config,
   lib,
-  ast-grep-skill,
-  agent-browser-skill,
-  tgrab-skill,
-  cmux-skill,
+  agentSkillsLib,
+  skillRegistry,
+  tgrab,
   local-skills,
   ...
 }:
+let
+  # External skill repositories are pinned in registry/sources/*.nix rather than
+  # as flake inputs, so `nix run .#skills-sources-lock` updates them all without
+  # touching flake.lock. Each manifest also carries its own subdir, idPrefix,
+  # and depth filter.
+  externalSources = agentSkillsLib.sourcesFromLock skillRegistry;
+
+  localSkillNames =
+    if local-skills == null then
+      [ ]
+    else
+      lib.filter (name: name != "web-fetch") (
+        builtins.attrNames (builtins.readDir "${local-skills}/agents/skills")
+      );
+in
 {
   programs.agent-skills = {
     enable = true;
 
-    # Skill sources (from flake inputs)
-    sources = {
-      # External: ast-grep official skill
-      ast-grep = {
-        path = ast-grep-skill;
-        subdir = "ast-grep/skills";
-      };
-      # External: agent-browser skill
-      agent-browser = {
-        path = agent-browser-skill;
-        subdir = "skills";
-      };
-      # External: tgrab skill
-      tgrab = {
-        path = tgrab-skill;
-        subdir = "skills";
-      };
-      cmux = {
-        path = cmux-skill;
-        subdir = "skills";
-      };
-      # Local: skills from this dotfiles repo
+    # External sources come from the pin registry; only this repo's own skills
+    # stay a direct path. `local` keeps bare IDs because skills.enable selects
+    # it by plain name.
+    sources = externalSources // {
       local = {
         path = local-skills;
         subdir = "agents/skills";
+        filter.maxDepth = 1;
       };
     };
 
-    skills.enableAll = [ "local" ];
+    skills.enable = localSkillNames;
 
     skills.explicit.ast-grep =
       let
@@ -77,9 +74,14 @@
           '';
       };
 
-    skills.explicit.tgrab = {
-      from = "tgrab";
-      path = "tgrab";
+    skills.explicit.web-fetch = {
+      from = "local";
+      path = "web-fetch";
+      packages = [
+        pkgs.llm-agents.ax
+        tgrab.packages.${pkgs.stdenv.hostPlatform.system}.default
+      ];
+      rewriteCommands = false;
     };
 
     skills.explicit.cmux = {
@@ -117,6 +119,11 @@
       path = "cmux-markdown";
     };
 
+    skills.explicit.gh-stack = {
+      from = "gh-stack";
+      path = "gh-stack";
+    };
+
     skills.explicit.agent-browser =
       let
         agentBrowserBin = "${config.home.homeDirectory}/.agents/skills/agent-browser/agent-browser";
@@ -150,11 +157,17 @@
     targets = {
       # Standard ~/.agents/skills directory
       agents = {
-        dest = ".agents/skills";
+        enable = true;
+        # Absolute: a global target's dest must not depend on the activation cwd.
+        dest = "$HOME/.agents/skills";
         structure = "copy-tree";
       };
-      # Claude Code user config
+      # Claude Code user config. Deliberately not the upstream default of
+      # ${CLAUDE_CONFIG_DIR:-$HOME/.claude}/skills: CLAUDE_CONFIG_DIR comes from
+      # home.sessionVariables, which is not exported during activation, so that
+      # default would silently expand to the wrong directory.
       claude = {
+        enable = true;
         dest = ".config/claude/skills";
         structure = "link";
       };

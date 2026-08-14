@@ -29,6 +29,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    omniwm = {
+      url = "github:DavSanchez/nix-dotfiles";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+      inputs.darwin.follows = "nix-darwin";
+    };
+
     llm-agents.url = "github:numtide/llm-agents.nix";
 
     nix-claude-code = {
@@ -75,11 +82,6 @@
       flake = false;
     };
 
-    gh-graph = {
-      url = "github:kawarimidoll/gh-graph";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     nix-index-database = {
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -91,25 +93,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Claude Code skills (flake = false for non-flake repos)
-    ast-grep-skill = {
-      url = "github:ast-grep/claude-skill";
-      flake = false;
-    };
-
-    agent-browser-skill = {
-      url = "github:vercel-labs/agent-browser";
-      flake = false;
-    };
-
-    tgrab-skill = {
-      url = "github:ryoppippi/tgrab";
-      flake = false;
-    };
-
-    cmux-skill = {
-      url = "github:manaflow-ai/cmux";
-      flake = false;
+    tgrab = {
+      url = "github:ryoppippi/tgrab/22a9bbb9267b7a8603a325dd0c1148be5fa69d4e";
     };
 
   };
@@ -122,21 +107,18 @@
       nix-darwin,
       nix-homebrew,
       home-manager,
+      omniwm,
       llm-agents,
       nix-claude-code,
       nix-bun,
       treefmt-nix,
       git-hooks,
       gh-nippou,
-      gh-graph,
       brew-nix,
       fish-na,
       nix-index-database,
       agent-skills,
-      ast-grep-skill,
-      agent-browser-skill,
-      tgrab-skill,
-      cmux-skill,
+      tgrab,
       ...
     }:
     let
@@ -150,6 +132,15 @@
       local-skills = nixpkgs.lib.fileset.toSource {
         root = ./.;
         fileset = ./agents/skills;
+      };
+
+      agentSkillsLib = agent-skills.lib.agent-skills;
+
+      # External skill repositories are pinned here instead of as flake inputs;
+      # refresh them with `nix run .#skills-sources-lock`.
+      skillRegistry = {
+        manifestsDir = ./registry/sources;
+        lockFile = ./registry/sources.lock.json;
       };
 
       # Create pkgs with overlays
@@ -168,11 +159,11 @@
             })
             nix-bun.overlays.default
             gh-nippou.overlays.default
-            gh-graph.overlays.default
             (import ./nix/overlays/default.nix)
           ]
           ++ nixpkgs.lib.optionals isDarwin [
             brew-nix.overlays.default
+            omniwm.overlays.additions
           ];
         };
 
@@ -207,12 +198,9 @@
                       config
                       lib
                       fish-na
-                      ast-grep-skill
-                      agent-browser-skill
-                      tgrab-skill
-                      cmux-skill
+                      tgrab
                       ;
-                    inherit local-skills;
+                    inherit local-skills agentSkillsLib skillRegistry;
                     homedir = linuxHomedir;
                     system = linuxSystem;
                     nodePackages = import ./nix/packages/node { inherit pkgs; };
@@ -264,6 +252,8 @@
           gitleaks = lib.getExe localPkgs.gitleaks;
           neovim = lib.getExe localPkgs.neovim;
           nom = lib.getExe localPkgs.nix-output-monitor;
+          nu = lib.getExe localPkgs.nushell;
+          nufmt = lib.getExe localPkgs.nufmt;
           oxfmt = lib.getExe localPkgs.oxfmt;
           renovateConfigValidator = lib.getExe' localPkgs.renovate "renovate-config-validator";
           treefmt = lib.getExe config.treefmt.build.wrapper;
@@ -359,6 +349,10 @@
                   options = [ "--write" ];
                   includes = [ "*.fish" ];
                 };
+                nufmt = {
+                  command = nufmt;
+                  includes = [ "*.nu" ];
+                };
               };
             };
           };
@@ -378,6 +372,18 @@
 
           # Apps
           apps = {
+            # Resolve every registry/sources/*.nix pin and rewrite
+            # registry/sources.lock.json. Replaces `nix flake update <skill>`
+            # for skill repositories.
+            skills-sources-lock = {
+              type = "app";
+              program = "${
+                agent-skills.lib.agent-skills.mkSourceLockProgram {
+                  pkgs = localPkgs;
+                }
+              }/bin/skills-sources-lock";
+            };
+
             nvim-restore = {
               type = "app";
               program = toString (
@@ -509,7 +515,7 @@
               program = toString (
                 localPkgs.writeShellScript "update-node-packages" ''
                   set -e
-                  exec ${bash} nix/packages/node/update.sh "$@"
+                  exec ${nu} nix/packages/node/update.nu "$@"
                 ''
               );
             };
@@ -585,18 +591,20 @@
                     imports = [
                       agent-skills.homeManagerModules.default
 
+                      (import ./nix/modules/darwin/programs/omniwm {
+                        omniwmModule = omniwm.homeModules.omniwm;
+                        inherit config lib pkgs;
+                      })
+
                       (import ./nix/modules/home {
                         inherit
                           pkgs
                           config
                           lib
                           fish-na
-                          ast-grep-skill
-                          agent-browser-skill
-                          tgrab-skill
-                          cmux-skill
+                          tgrab
                           ;
-                        inherit local-skills;
+                        inherit local-skills agentSkillsLib skillRegistry;
                         homedir = darwinHomedir;
                         system = "aarch64-darwin";
                         nodePackages = import ./nix/packages/node { inherit pkgs; };
