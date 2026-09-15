@@ -34,7 +34,7 @@
     })
 
     # Codex configuration
-    (import ./codex.nix {
+    (import ./codex {
       inherit
         pkgs
         lib
@@ -99,8 +99,8 @@
     })
 
     # cmux terminal configuration
-    (import ./cmux.nix {
-      inherit pkgs;
+    (import ./cmux {
+      inherit pkgs lib;
     })
 
     # Bat configuration

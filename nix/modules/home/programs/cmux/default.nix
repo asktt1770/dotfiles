@@ -1,9 +1,10 @@
 # docs
 # https://cmux.com/docs/configuration
 
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 let
   jsonFormat = pkgs.formats.json { };
+  cmuxCli = "/Applications/cmux.app/Contents/Resources/bin/cmux";
 
   cmuxSettings = {
     "$schema" = "https://raw.githubusercontent.com/manaflow-ai/cmux/main/web/data/cmux.schema.json";
@@ -80,4 +81,10 @@ in
     source = jsonFormat.generate "cmux.json" cmuxSettings;
     force = true;
   };
+
+  home.activation.installCmuxHooks = lib.mkIf pkgs.stdenv.isDarwin (
+    lib.hm.dag.entryAfter [ "writeBoundary" "writeCodexConfig" ] ''
+      ${cmuxCli} hooks setup -y
+    ''
+  );
 }
