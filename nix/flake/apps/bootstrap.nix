@@ -79,7 +79,7 @@
             def main [] {
                 let user = (^id -un | str trim)
                 if $user != "${username}" {
-                    error make {msg: $"This configuration builds for `${username}`, but you are `($user)`. Fork it and change `username` in nix/flake/constants.nix."}
+                    error make {msg: $"This configuration builds for `${username}`, but you are `($user)`. Fork it and change `username` in personal.nix."}
                 }
 
                 if ("${checkout}" | path exists) {

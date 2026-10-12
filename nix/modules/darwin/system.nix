@@ -86,11 +86,18 @@ in
     activationScripts.userDefaults.text = lib.mkAfter ''
       user_id=$(/usr/bin/id -u -- ${username})
       user_preferences=/Users/${username}/Library/Preferences/com.apple.symbolichotkeys.plist
-      # 32-35 are Mission Control and Application Windows on Ctrl(+Shift)+Up/Down,
-      # 79-82 move a Space left/right on Ctrl(+Shift)+Left/Right; OmniWM and
-      # karabiner.ts own those keys. An untouched shortcut has no entry in the
-      # plist, so the whole entry is replaced rather than only its `enabled` key.
-      for shortcut_id in 25 26 32 33 34 35 79 80 81 82; do
+      # 32-35 are Mission Control and Application Windows on Ctrl(+Shift)+Up/Down;
+      # OmniWM binds focusMonitorNext/Previous to those keys instead.
+      #
+      # 79-82 move a Space left/right on Ctrl(+Shift)+Left/Right. Upstream
+      # disables them because its karabiner.ts maps those keys to
+      # `omniwmctl command switch-workspace`; this fork's rule set does not,
+      # and OmniWM binds nothing to Ctrl+Left/Right, so disabling them here
+      # would leave the keys dead rather than rebound.
+      #
+      # An untouched shortcut has no entry in the plist, so the whole entry is
+      # replaced rather than only its `enabled` key.
+      for shortcut_id in 25 26 32 33 34 35; do
         /bin/launchctl asuser "$user_id" /usr/bin/sudo --user=${username} -- /usr/bin/plutil -replace "AppleSymbolicHotKeys.$shortcut_id" -json '{"enabled":false}' "$user_preferences"
       done
       /bin/launchctl asuser "$user_id" /usr/bin/sudo --user=${username} -- /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
