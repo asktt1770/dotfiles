@@ -19,7 +19,7 @@ in
       # CLI tools
       blueutil
       audio-priority-bar
-      tailscale
+      xcodes
 
       # GUI applications (available in nixpkgs)
       cyberduck
@@ -31,7 +31,6 @@ in
       appcleaner
       beekeeper-studio
       betterdisplay
-      bluesnooze
       cursor
       dockdoor
       figma
@@ -48,13 +47,12 @@ in
       (pkgs.brewCasks.suspicious-package.overrideAttrs (oldAttrs: {
         src = pkgs.fetchurl {
           url = builtins.head oldAttrs.src.urls;
-          hash = "sha256-W4IVt6ZTbR1B8aNIXjQos5+NPQ8kcasaDGm+2yLfTls=";
+          hash = "sha256-y+F7GhwdYTfo82RDYihjdzcJ1BXAruxo5Bspzj+tKX8=";
         };
       }))
     ];
 
   launchd.agents = {
-    bluesnooze = mkLoginAgent pkgs.brewCasks.bluesnooze "Bluesnooze";
     is-there-net = mkLoginAgent pkgs.brewCasks.istherenet "IsThereNet";
   };
 

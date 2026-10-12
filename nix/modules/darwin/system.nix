@@ -86,8 +86,12 @@ in
     activationScripts.userDefaults.text = lib.mkAfter ''
       user_id=$(/usr/bin/id -u -- ${username})
       user_preferences=/Users/${username}/Library/Preferences/com.apple.symbolichotkeys.plist
-      for shortcut_id in 25 26; do
-        /bin/launchctl asuser "$user_id" /usr/bin/sudo --user=${username} -- /usr/bin/plutil -replace "AppleSymbolicHotKeys.$shortcut_id.enabled" -bool false "$user_preferences"
+      # 32-35 are Mission Control and Application Windows on Ctrl(+Shift)+Up/Down,
+      # 79-82 move a Space left/right on Ctrl(+Shift)+Left/Right; OmniWM and
+      # karabiner.ts own those keys. An untouched shortcut has no entry in the
+      # plist, so the whole entry is replaced rather than only its `enabled` key.
+      for shortcut_id in 25 26 32 33 34 35 79 80 81 82; do
+        /bin/launchctl asuser "$user_id" /usr/bin/sudo --user=${username} -- /usr/bin/plutil -replace "AppleSymbolicHotKeys.$shortcut_id" -json '{"enabled":false}' "$user_preferences"
       done
       /bin/launchctl asuser "$user_id" /usr/bin/sudo --user=${username} -- /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
     '';
@@ -273,7 +277,6 @@ in
     taps = [
       "arto-app/tap"
       "typewhisper/tap"
-      "xykong/tap"
     ];
 
     brews = [
@@ -288,25 +291,25 @@ in
       "audacity"
       "blackhole-16ch"
       "blu-ray-player-pro"
+      "chatgpt"
       "cleanshot"
       "claude"
-      "codex-app"
       "cotypist"
       "cmux"
       "cloudflare-warp"
       "discord"
       "google-chrome"
       "google-drive"
+      "grok-bot"
       "karabiner-elements"
       "ollama-app"
       "openvpn-connect"
       "orbstack"
       "raycast"
-      "secretive"
       "steam"
+      "t3-code"
       "telegram"
       "typewhisper/tap/typewhisper"
-      "xykong/tap/flux-markdown"
     ];
 
     masApps = {
@@ -319,6 +322,7 @@ in
       "Command X" = 6448461551;
       "Consent-O-Matic" = 1606897889;
       "DevCleaner" = 1388020431;
+      "Dockitty" = 6743999434;
       "Document Generator" = 1437883178;
       "Gifski" = 1351639930;
       "Hush" = 1544743900;
@@ -340,7 +344,6 @@ in
       "Userscripts" = 1463298887;
       "Velja" = 1607635845;
       "WhatsApp" = 310633997;
-      "Xcode" = 497799835;
       "uBlacklist for Safari" = 1547912640;
     };
   };

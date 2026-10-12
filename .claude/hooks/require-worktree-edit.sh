@@ -4,7 +4,7 @@
 # This repository's dotfiles (fish/, nvim/, …) are live-symlinked into ~/.config
 # from the main checkout. Editing a file in the main checkout therefore rewrites
 # the user's live environment instantly. All implementation work must happen in
-# an isolated git worktree instead (see CLAUDE.md > Worktree Workflow).
+# an isolated git worktree instead (see AGENTS.md > Worktree Workflow).
 #
 # Registered as a PreToolUse hook for Edit|Write|MultiEdit|NotebookEdit. The hook
 # receives the tool invocation as JSON on stdin; exiting 2 blocks the call and
@@ -60,5 +60,5 @@ proj_common="$(git -C "${CLAUDE_PROJECT_DIR:-.}" rev-parse --path-format=absolut
 # Different repo family -> not our main checkout -> allow.
 [ "$target_common" = "$proj_common" ] || exit 0
 
-echo "BLOCKED: editing the main checkout is not allowed (its dotfiles are live-symlinked from ~/.config). Create an isolated worktree first with the EnterWorktree tool, then edit inside it. See CLAUDE.md > Worktree Workflow." >&2
+echo "BLOCKED: editing the main checkout is not allowed (its dotfiles are live-symlinked from ~/.config). Create an isolated worktree first with the EnterWorktree tool, then edit inside it. See AGENTS.md > Worktree Workflow." >&2
 exit 2

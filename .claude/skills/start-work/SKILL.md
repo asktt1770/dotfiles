@@ -6,7 +6,7 @@ description: Begin a new piece of implementation work in this repo by creating a
 # Start Work
 
 Set up isolated implementation work in this dotfiles repo so nothing lands on
-`main` directly. See `CLAUDE.md > Worktree Workflow` for the full policy.
+`main` directly. See `AGENTS.md > Worktree Workflow` for the full policy.
 
 ## Steps
 

@@ -40,7 +40,6 @@ return {
 
 				-- web/javascript
 				"svelte",
-				"denols",
 				"prismals",
 				"astro",
 				"biome",
@@ -52,7 +51,7 @@ return {
 				"unocss",
 				"html",
 				"stylelint_lsp",
-				"tsgo",
+				"tsc",
 
 				-- go
 				"gopls",

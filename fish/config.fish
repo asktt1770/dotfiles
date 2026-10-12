@@ -69,9 +69,6 @@ fish_add_path /opt/homebrew/bin
 fish_add_path $HOME/.bun/bin
 fish_add_path $HOME/.cache/.bun/bin
 
-## deno
-fish_add_path $HOME/.deno/bin
-
 # go
 set -gx GOPATH $HOME/go
 fish_add_path $GOPATH/bin
@@ -102,10 +99,6 @@ if not test -d $HM_PATH_BIN
     set HM_PATH_BIN "/etc/profiles/per-user/$USER/bin"
 end
 fish_add_path $HM_PATH_BIN
-
-# Secretive
-set SSH_SECRETIVE_SSH_SOCK $HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh
-test -e $SSH_SECRETIVE_SSH_SOCK && set -x SSH_AUTH_SOCK $SSH_SECRETIVE_SSH_SOCK
 
 set -l CONFIG_CACHE $FISH_CACHE_DIR/config.fish
 if not test -f "$CONFIG_CACHE"; or test "$FISH_CONFIG" -nt "$CONFIG_CACHE"
@@ -172,5 +165,5 @@ if status is-interactive
     stty start undef &
 end
 
-set -g NA_PACKAGE_MANAGER_LIST bun deno pnpm npm yarn
+set -g NA_PACKAGE_MANAGER_LIST bun pnpm npm yarn
 set -g NA_FUZZYFINDER_OPTIONS --bind 'one:accept' --query '^'

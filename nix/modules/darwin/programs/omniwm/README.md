@@ -1,8 +1,11 @@
 # OmniWM
 
-OmniWM provides Niri-style scrolling window management on macOS. The Nix
-module is defined in [`default.nix`](default.nix), and the application settings
-are stored in [`settings.toml`](settings.toml).
+OmniWM provides Niri-style scrolling window management on macOS. The package
+and the `programs.omniwm` module come from
+[omniwm.nix](https://github.com/mst-mkt/omniwm.nix), which disables the module
+Home Manager ships and merges the settings given to it over the packaged
+OmniWM version's own defaults. This repository's settings therefore live
+entirely in [`default.nix`](default.nix) and name only what they change.
 
 The external display shows three containers at once. The built-in MacBook
 display overrides this to two containers. Chat and dictionary applications
@@ -15,88 +18,121 @@ start narrow, while cmux starts at full column width on workspace 2.
 alias; OmniWM settings use the literal modifiers because it has no custom
 modifier names.
 
-- CLAW44: hold the left-half Backspace key; tapping it still sends Backspace.
-  The right-half Backspace key remains a normal repeatable Backspace. `Lang1`
-  also provides Hyper while held, and `Lang2` provides Command. See the
+- CLAW44: hold `;`; tapping it still sends `;`. `Lang1` also provides Hyper
+  while held, and `Lang2` provides Command. See the
   [generated keymap](../../../../../keymap/claw44.pdf) for all layers.
 - CLAW44: hold `S+D` for the Workspace layer.
-- MacBook keyboard: hold Fn. Right Option provides the original Fn key.
-- MacBook keyboard: hold Tab for the Workspace layer; tap still sends Tab.
-  A held Tab cannot also send Tab, so `Workspace+Tab` is unreachable there.
-  [`karabiner.ts`](../../../../../karabiner/karabiner.ts) therefore aliases
-  `Workspace+Return` onto it for every keyboard: the CLAW44 keeps the Tab it can
-  press comfortably, and either key works on either keyboard. OmniWM itself
-  binds one shortcut per command, which is why the alias lives in Karabiner.
-  On the CLAW44 this relies on a tapped `Enter` still sending Return while only
-  a held one reaches Layer 2.
+- CLAW44: [`karabiner.ts`](../../../../../karabiner/karabiner.ts) aliases
+  `Workspace+Return` onto `Workspace+Tab`, so either key reaches
+  back-and-forth. OmniWM binds one shortcut per command, which is why the alias
+  lives in Karabiner. This relies on a tapped `Enter` still sending Return while
+  only a held one reaches Layer 2.
+- MacBook keyboard: hold `;`, the same key as on the CLAW44.
+  [`karabiner.ts`](../../../../../karabiner/karabiner.ts) only enters the layer
+  after 200 ms, and a key pressed before then sends `;` first, so typing `; `
+  quickly stays text. Fn is Ctrl+Shift instead (see below), and Right Option
+  provides the original Fn key.
+- **MacBook keyboard: there is no Workspace layer.** The Ctrl scheme below is
+  the whole of workspace and monitor control there — see
+  [Why the MacBook has no Workspace layer](#why-the-macbook-has-no-workspace-layer).
 
-## Window Shortcuts
+## Window shortcuts
 
-| Action                                         | OmniWM shortcut   | CLAW44 keys                      | MacBook keys        |
-| ---------------------------------------------- | ----------------- | -------------------------------- | ------------------- |
-| Focus left/down/up/right                       | `Hyper+H/J/K/L`   | Left BS hold + `H/J/K/L`         | Fn hold + `H/J/K/L` |
-| Focus previous window                          | `Hyper+Tab`       | Lang1 hold + left Tab            | Fn hold + Tab       |
-| Move column left/right                         | `Hyper+←/→`       | Left BS hold + `←/→`             | Fn hold + `←/→`     |
-| Reorder window down/up                         | `Hyper+↓/↑`       | Left BS hold + `↓/↑`             | Fn hold + `↓/↑`     |
-| Consume/expel window left/right                | `Hyper+N/M`       | Left BS hold + `N/M`             | Fn hold + `N/M`     |
-| Resize column smaller/larger                   | `Hyper+Y/O`       | Left BS hold + `Y/O`             | Fn hold + `Y/O`     |
-| Resize window shorter/taller                   | `Hyper+U/I`       | Left BS hold + `U/I`             | Fn hold + `U/I`     |
-| Toggle near-full display width                 | `Hyper+F`         | Lang1 hold + `F`                 | Fn hold + `F`       |
-| Reset window height                            | `Hyper+R`         | Lang1 hold + `R`                 | Fn hold + `R`       |
-| Toggle tabbed column                           | `Hyper+T`         | Lang1 hold + `T`                 | Fn hold + `T`       |
-| Toggle floating                                | `Hyper+D`         | Lang1 hold + `D`                 | Fn hold + `D`       |
-| Open command palette                           | `Hyper+Space`     | Lang1 hold + Space               | Fn hold + Space     |
-| Switch workspace back and forth                | `Workspace+Tab`   | `S+D` hold + right Tab or Return | Tab hold + Return   |
-| Move window to previous/next display           | `Workspace+↑/↓`   | `S+D` hold + Layer 2 + `↑/↓`     | Tab hold + `↑/↓`    |
-| Move window to previous/next display workspace | `Workspace+←/→`   | `S+D` hold + Layer 2 + `H/L`     | Tab hold + `←/→`    |
-| Toggle Overview                                | `Workspace+Space` | `S+D` hold + Space               | Tab hold + Space    |
+Everything within a single workspace lives on Hyper, and both keyboards reach it
+the same way.
 
-`Workspace+↑/↓` binds the native `moveToWorkspace.1`/`moveToWorkspace.3`
-hotkeys to `Option+Command+Shift+Up/Down Arrow` in [`settings.toml`](settings.toml).
-There is no dedicated "focus the other monitor" shortcut on this layer — see
-`Ctrl+↑/↓` below for that.
+| Action                          | OmniWM shortcut | CLAW44 keys           | MacBook keys         |
+| ------------------------------- | --------------- | --------------------- | -------------------- |
+| Focus left/down/up/right        | `Hyper+H/J/K/L` | `;` hold + `H/J/K/L`  | `;` hold + `H/J/K/L` |
+| Focus previous window           | `Hyper+Tab`     | Lang1 hold + left Tab | `;` hold + Tab       |
+| Move column left/right          | `Hyper+←/→`     | `;` hold + `←/→`      | `;` hold + `←/→`     |
+| Reorder window down/up          | `Hyper+↓/↑`     | `;` hold + `↓/↑`      | `;` hold + `↓/↑`     |
+| Consume/expel window left/right | `Hyper+N/M`     | `;` hold + `N/M`      | `;` hold + `N/M`     |
+| Resize column smaller/larger    | `Hyper+Y/O`     | `;` hold + `Y/O`      | `;` hold + `Y/O`     |
+| Resize window shorter/taller    | `Hyper+U/I`     | `;` hold + `U/I`      | `;` hold + `U/I`     |
+| Toggle near-full display width  | `Hyper+F`       | Lang1 hold + `F`      | `;` hold + `F`       |
+| Reset window height             | `Hyper+R`       | Lang1 hold + `R`      | `;` hold + `R`       |
+| Toggle tabbed column            | `Hyper+T`       | Lang1 hold + `T`      | `;` hold + `T`       |
+| Toggle floating                 | `Hyper+D`       | Lang1 hold + `D`      | `;` hold + `D`       |
+| Open command palette            | `Hyper+Space`   | Lang1 hold + Space    | `;` hold + Space     |
 
-On any keyboard, [`karabiner.ts`](../../../../../karabiner/karabiner.ts) adds a
-Ctrl-based scheme that mirrors the arrow keys instead of stacking onto
-Hyper/Workspace:
+## Workspace and display shortcuts
 
-Ctrl navigates, Ctrl+Shift carries the focused window along. Vertical crosses
-displays; horizontal stays within one display's own workspaces.
+Everything that crosses a workspace or a display boundary lives on Ctrl, on both
+keyboards. It mirrors the arrow keys rather than stacking onto Hyper/Workspace:
+Ctrl navigates, Ctrl+Shift carries the focused window along, vertical crosses
+displays, horizontal stays within one display's own workspaces.
 
-| Action                                      | Keys             |
-| ------------------------------------------- | ---------------- |
-| Focus the other display                     | `Ctrl+↑/↓`       |
-| Switch workspace                            | `Ctrl+←/→`       |
-| Move window across displays                 | `Ctrl+Shift+↑/↓` |
-| Move window between workspaces of a display | `Ctrl+Shift+←/→` |
+| Action                                      | Keys             | Handled by                           |
+| ------------------------------------------- | ---------------- | ------------------------------------ |
+| Focus the other display                     | `Ctrl+↑/↓`       | OmniWM `focusMonitorNext`/`Previous` |
+| Switch workspace                            | `Ctrl+←/→`       | `karabiner.ts` → `omniwmctl`         |
+| Move window across displays                 | `Ctrl+Shift+↑/↓` | `karabiner.ts` → `Workspace+↑/↓`     |
+| Move window between workspaces of a display | `Ctrl+Shift+←/→` | `karabiner.ts` → `Workspace+←/→`     |
 
-`Ctrl+↑/↓`, `Ctrl+←/→`, and `Ctrl+Shift+↑/↓` shell out to `omniwmctl` directly
-rather than remapping to a synthetic keypress. `Ctrl+←/→` and
-`Ctrl+Shift+↑/↓` do this because OmniWM exposes no bindable hotkey action for
-either one — for monitors only `focus-monitor` is bindable, never "move the
-focused window to another monitor". `Ctrl+↑/↓` shells out to `focus-monitor`
-for a different reason: `Option+Command+Shift+Up/Down Arrow` (the synthetic
-keypress it used to remap to) is now claimed by `moveToWorkspace.1`/`.3` above,
-so giving focus its own physical trigger needs the CLI rather than a shared
-key. `Ctrl+Shift+←/→` is the one exception that still remaps to a synthetic
-keypress, landing on the same native `moveWindowToWorkspaceUp`/`Down` hotkeys
-that `Workspace+←/→` uses.
+On the MacBook, Fn is Ctrl+Shift, so moving a window takes Fn and an arrow key
+alone.
 
-`Ctrl+Shift+↑/↓` names its destination workspace outright
-(`move-to-workspace 1` / `move-to-workspace 3`) rather than using the
-directional `move-to-workspace on-monitor <workspace> <up|down>`. The
-directional form additionally depends on the Monitor Routing Arrangement below
-— without a custom one, every direction except `left` returns `not_found`, and
-`left` reports success without moving anything — and since the destination
-workspace has to be named either way, the direction buys nothing.
+`Ctrl+↑/↓` is bound in [`default.nix`](default.nix) directly. With two
+displays, next and previous both reach the other one. macOS binds the same keys
+to Mission Control and Application Windows, so `system.nix` disables those
+symbolic hotkeys, along with the Space-switching ones on `Ctrl+←/→`.
+
+`Ctrl+Shift+↑/↓` and `Ctrl+Shift+←/→` are remapped in
+[`karabiner.ts`](../../../../../karabiner/karabiner.ts) to the Workspace
+layer's own `Option+Command+Shift` bindings, because OmniWM binds one shortcut
+per command. Up/Down land on `moveToWorkspace.1`/`.3`, which name the
+destination workspace outright rather than using the directional
+`moveWindowToMonitor.up`/`.down`. The directional form depends on the Monitor
+Routing Arrangement below, and since workspaces are pinned to the main and
+secondary displays, naming a workspace already names a display.
+
+`Ctrl+←/→` is the one rule that still shells out to `omniwmctl command
+switch-workspace prev/next`.
+
+### The Workspace layer, CLAW44 only
 
 On the CLAW44, `Ctrl+↑/↓` and `Ctrl+←/→` work (hold `Esc` or `G` for Ctrl, hold
 `Enter` for Layer 2, tap `K`/`J`/`H`/`L`). `Ctrl+Shift+↑/↓` and
 `Ctrl+Shift+←/→` additionally need Shift held (the thumb `Tab` key) at the same
 time — a fourth simultaneous hold alongside Ctrl and Layer 2 — which the
-CLAW44's QMK tap/hold resolution does not reliably register. Use
-`Workspace+↑/↓`/`Workspace+←/→` on the CLAW44 for those two instead; they reach
-the same actions.
+CLAW44's QMK tap/hold resolution does not reliably register. The Workspace layer
+is the CLAW44's route to those two, and the only route to Overview.
+
+| Action                                         | OmniWM shortcut   | CLAW44 keys                      | MacBook equivalent     |
+| ---------------------------------------------- | ----------------- | -------------------------------- | ---------------------- |
+| Switch workspace back and forth                | `Workspace+Tab`   | `S+D` hold + right Tab or Return | `Ctrl+←/→` (prev/next) |
+| Move window to previous/next display           | `Workspace+↑/↓`   | `S+D` hold + Layer 2 + `↑/↓`     | `Ctrl+Shift+↑/↓`       |
+| Move window to previous/next display workspace | `Workspace+←/→`   | `S+D` hold + Layer 2 + `H/L`     | `Ctrl+Shift+←/→`       |
+| Toggle Overview                                | `Workspace+Space` | `S+D` hold + Space               | unbound                |
+
+`Workspace+↑/↓` binds the native `moveToWorkspace.1`/`moveToWorkspace.3`
+hotkeys to `Option+Command+Shift+Up/Down Arrow` in [`default.nix`](default.nix).
+There is no dedicated "focus the other monitor" shortcut on this layer — use
+`Ctrl+↑/↓` for that.
+
+## Why the MacBook has no Workspace layer
+
+The MacBook once held the Workspace layer on a held Tab, which left it with two
+overlapping schemes for the same four commands. Two of the four were outright
+duplicates — `Workspace+←/→` and `Ctrl+Shift+←/→` fire the same
+`moveWindowToWorkspaceUp`/`Down` hotkeys, and `Workspace+↑/↓` and
+`Ctrl+Shift+↑/↓` both land the window on workspace 1 or 3. Of the two that were
+not, back-and-forth is redundant when a display owns exactly two workspaces
+(`Ctrl+←/→` already flips between them) and Overview goes unused. Dropping the
+layer costs the MacBook nothing and leaves one scheme to remember.
+
+Ctrl is also the better host: it sits under the left pinky, and holding it
+suppresses the tap that would otherwise send `japanese_eisuu`+Escape. The
+alternatives are worse. Making left Option the layer would turn every
+`Option+X` into `Option+Command+Shift+X`, taking word-wise arrow movement,
+`Option+Delete`, and Option-based characters with it. Right Option is already
+the original Fn key, and giving it to window management — tried once and
+reverted — costs `fn`+arrows, forward delete, and the function row.
+
+The CLAW44 keeps its Workspace layer: it hangs off `S+D` rather than a key that
+doubles as text input, and it is the only way to reach the two commands whose
+Ctrl equivalents need a fourth simultaneous hold.
 
 ## Workspaces
 
@@ -108,10 +144,11 @@ assignment uses `type = "main"` / `type = "secondary"` rather than
 `specificDisplay`, so replacing the external monitor needs no configuration
 change. cmux opens on workspace 2.
 
-`Workspace+←/→` moves the focused window between the workspaces of a display.
-This moves only the window; the workspace itself stays assigned to its display.
-`Workspace+Tab` changes the active workspace without moving a window.
-`Hyper+Tab` focuses the previously focused window within the current workspace.
+`Ctrl+Shift+←/→` (`Workspace+←/→` on the CLAW44) moves the focused window
+between the workspaces of a display. This moves only the window; the workspace
+itself stays assigned to its display. `Ctrl+←/→` changes the active workspace
+without moving a window. `Hyper+Tab` focuses the previously focused window
+within the current workspace.
 
 ## Trackpad
 
@@ -121,7 +158,8 @@ goes to the previous workspace. macOS four-finger horizontal and vertical
 gestures are disabled so Spaces and Mission Control do not intercept the
 gesture. The native macOS three-finger vertical gesture is also disabled, so
 ordinary scrolling cannot open Mission Control or another window overview.
-Use `Workspace+Space` for the reliable keyboard Overview toggle.
+`Workspace+Space` is the reliable keyboard Overview toggle on the CLAW44; the
+MacBook has no Overview shortcut because Overview goes unused there.
 
 IPC is enabled for `omniwmctl` automation. The CLI is available while OmniWM is
 running, for example with `omniwmctl ping` or
@@ -143,8 +181,8 @@ exist and both matter:
   never resolve a clean up/down/left/right relationship.
 - **OmniWM Routing Arrangement** (OmniWM Settings > Monitors > Custom
   Arrangement): a separate map that should match the real desk. This is what
-  `monitorRoutingOverrides` and `[routing] mode = "custom"` in `settings.toml`
-  represent. Displays must connect by a shared edge, not just a corner, or
+  `routing.arrangements` and `[routing] mode = "custom"` in the live
+  `settings.toml` represent. Displays must connect by a shared edge, not just a corner, or
   directional commands return `not_found`.
 - **Mouse Warp** must stay enabled (`[mouseWarp] enabled = true`). It moves the
   pointer across display edges using the OmniWM routing map, not the macOS
@@ -157,23 +195,41 @@ Setup...**. It does not belong in this repository — see below.
 ## Configuration ownership
 
 OmniWM writes the complete canonical `settings.toml` when settings are saved in
-the GUI, and it has no include mechanism, so there is no separate file for
-machine-local settings. Home Manager therefore rebuilds the live file during
-activation with [`merge-settings.nu`](merge-settings.nu) instead of managing a
-read-only Nix store symlink, and ownership is split:
+the GUI, and it has no include mechanism, so `~/.config/omniwm/settings.toml`
+is the only settings source and every writer has to produce the whole file.
+Ownership is split between this repository and the GUI.
 
-- **This repository owns everything else.** Edit [`settings.toml`](settings.toml)
-  and run the Darwin switch to apply persistent changes. GUI edits to those
-  settings are discarded by the next switch.
-- **The GUI owns the monitor settings** — `monitorBarOverrides`,
+- **This repository owns everything it names.** Edit the `settings` attribute
+  set in [`default.nix`](default.nix) and run the Darwin switch. The module
+  merges it over the defaults of the packaged OmniWM version and installs the
+  result, keeping the previous file as `settings.toml.bak`. GUI edits to a
+  setting named there are discarded by the next switch.
+- **The flake owns the schema.** `schemaVersion` and the full list of hotkey
+  ids come from `settings-defaults.toml`, which is regenerated from the
+  packaged OmniWM on every version bump, so new keys arrive with the package.
+  A binding for an id the packaged build does not know fails the Nix
+  evaluation. This matters because the runtime failure is silent: OmniWM
+  rejects the whole file over one unrecognised hotkey id, logs a line, and
+  keeps running on whatever it loaded last.
+- **The GUI owns the display settings** — `monitorBarOverrides`,
   `monitorDwindleOverrides`, `monitorGapOverrides`, `monitorNiriOverrides`,
-  `monitorOrientationOverrides`, `monitorRoutingOverrides`, and
-  `[routing] mode`. Each is keyed by `monitorDisplayUUID`, which makes them a
-  description of the machine and the desk it sits on rather than of this
-  configuration: the external display differs between home and the office, so a
-  committed UUID would be wrong in one of them. Activation reads these back
-  from the live file and layers them over the template, so they survive a
+  `monitorOrientationOverrides`, and the whole `[routing]` table. Each is keyed
+  by `monitorDisplayUUID`, which makes them a description of the machine and
+  the desk it sits on rather than of this configuration: the external display
+  differs between home and the office, so a committed UUID would be wrong in
+  one of them. The module's `preserveSettings` keeps whatever the live file
+  already holds at those paths instead of regenerating them, so they survive a
   switch and need to be configured once per machine.
+
+`monitorRoutingOverrides` was removed in OmniWM 0.6.9 (settings schema 3); the
+routing map lives in `routing.arrangements` now.
+
+If a setting change does not take effect, check whether the app rejected the
+file:
+
+```bash
+log show --last 10m --predicate 'subsystem == "com.barut.OmniWM"' --style compact
+```
 
 On the CLAW44, holding `Enter` activates Layer 2. The tables write `Layer 2`
 instead of `Enter` to describe the layer action rather than the physical key.

@@ -12,28 +12,48 @@ let
 
   nu = lib.getExe pkgs.nushell;
 
-  # Global instructions are assembled from the Codex-specific file plus the
-  # shared fragments in agents/shared/, which are the single source of truth
-  # also imported by claude/CLAUDE.md. Codex has no import mechanism, so the
-  # final AGENTS.md is generated at switch time instead of symlinked.
-  agentsMdText = lib.concatMapStringsSep "\n" builtins.readFile [
-    ../../../../../codex/AGENTS.md
+  # Codex has no import mechanism, so ~/.codex/AGENTS.md is generated at switch
+  # time from the shared entry point: its `@` imports — which only Claude Code
+  # resolves — are dropped and the fragments they name are appended instead.
+  sharedFragments = [
+    ../../../../../agents/shared/tools.md
+    ../../../../../agents/shared/nix.md
     ../../../../../agents/shared/code-comments.md
     ../../../../../agents/shared/command-privacy.md
     ../../../../../agents/shared/git-staging.md
     ../../../../../agents/shared/git-worktrees.md
     ../../../../../agents/shared/delegate-work.md
+    ../../../../../agents/shared/browser.md
   ];
 
+  dropClaudeImports =
+    text:
+    let
+      kept = lib.filter (line: !(lib.hasPrefix "@~/.config/claude/shared/" line)) (
+        lib.splitString "\n" text
+      );
+      # Each import sits in its own paragraph, so removing them leaves a run of
+      # blank lines where the import block was.
+      squashed = lib.foldl' (
+        acc: line: if line == "" && acc != [ ] && lib.last acc == "" then acc else acc ++ [ line ]
+      ) [ ] kept;
+    in
+    lib.concatStringsSep "\n" squashed;
+
+  agentsMdText = lib.concatStringsSep "\n" (
+    [ (dropClaudeImports (builtins.readFile ../../../../../agents/AGENTS.md)) ]
+    ++ map builtins.readFile sharedFragments
+  );
+
   settings = {
-    model = "gpt-5.6-luna";
+    model = "gpt-6-luna";
     approval_policy = "on-request";
     approvals_reviewer = "auto_review";
     allow_login_shell = true;
     model_reasoning_effort = "max";
     web_search_request = true;
     personality = "pragmatic";
-    service_tier = "fast"; # "standard" or "fast"
+    service_tier = "standard"; # "standard" or "fast"
     project_doc_fallback_filenames = [ "CLAUDE.md" ];
 
     shell_environment_policy = {
@@ -49,11 +69,11 @@ let
 
     agents = {
       max_concurrent_threads_per_session = 100;
-      default_subagent_model = "gpt-5.6-luna";
+      default_subagent_model = "gpt-6-luna";
       default_subagent_reasoning_effort = "max";
     };
 
-    notice.fast_default_opt_out = false;
+    notice.fast_default_opt_out = true;
 
     desktop = {
       preventSleepWhileRunning = true;

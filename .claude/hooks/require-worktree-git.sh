@@ -34,7 +34,7 @@ norm="$(printf '%s' "$cmd" | tr '\n' ' ')"
 # Emit a blocking decision (exit 2) with an explanation Claude can act on.
 deny() {
   printf "BLOCKED: '%s' mutates the main checkout, whose dotfiles are live-symlinked from ~/.config.\n" "$1" >&2
-  printf 'Do this work in a worktree instead: use the EnterWorktree tool, then run the command there. See CLAUDE.md > Worktree Workflow.\n' >&2
+  printf 'Do this work in a worktree instead: use the EnterWorktree tool, then run the command there. See AGENTS.md > Worktree Workflow.\n' >&2
   exit 2
 }
 
