@@ -30,7 +30,7 @@
 | `nix run .#update-ai-tools`     | llm-agents input だけ更新               |
 | `nix run .#build`               | ビルドのみ（適用せず動作確認）          |
 
-出典: `flake.nix` / `CLAUDE.md`
+出典: `nix/flake/apps/` / `AGENTS.md`
 
 ---
 

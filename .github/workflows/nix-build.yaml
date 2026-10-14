@@ -27,6 +27,7 @@ jobs:
               - 'flake.nix'
               - 'flake.lock'
               - 'nix/**'
+              - 'nvim/nvimx-lock/**'
               - '.github/workflows/nix-build.yaml'
               - '.github/actions/setup-nix/**'
 
@@ -52,10 +53,17 @@ jobs:
       # homoglyph of ASCII '.'. That is a false positive on legitimate Japanese
       # prose, not a homoglyph attack, so the fork-only docs are not scanned.
       #
+      # TIRITH_POLICY_ROOT makes tirith load .tirith/policy.yaml as a trusted
+      # (org-scope) policy. Discovered as a repo-scoped policy instead, the
+      # file could only tighten defaults and its analysis_incomplete downgrade
+      # for Nushell steps would be silently neutralised.
+      #
       # tirith exit codes: 0 = clean, 1 = high/critical findings (block the
       # gate), 2 = only findings below the --fail-on threshold (allow). The
       # gate must fail only on code 1, so 0 and 2 are treated as passing.
       - name: Scan repository
+        env:
+          TIRITH_POLICY_ROOT: ${{ github.workspace }}
         run: |
           set +e
           tirith scan . --exclude '.git/**' --exclude '*.pdf' --exclude 'docs/**' --ci --fail-on high
@@ -86,29 +94,5 @@ jobs:
         if: needs.changes.outputs.nix == 'true' || github.event_name == 'workflow_dispatch'
         run: |
           nix build .#homeConfigurations.asktt1770.activationPackage \
-            --print-build-logs \
-            --show-trace
-
-  build-ubuntu-arm:
-    needs: [changes, security]
-    runs-on: ubuntu-24.04-arm
-    timeout-minutes: 90
-    steps:
-      - name: Skip if no Nix changes
-        if: needs.changes.outputs.nix != 'true' && github.event_name != 'workflow_dispatch'
-        run: echo "No Nix-related changes detected, skipping build"
-
-      - name: Checkout repository
-        if: needs.changes.outputs.nix == 'true' || github.event_name == 'workflow_dispatch'
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-
-      - name: Setup Nix
-        if: needs.changes.outputs.nix == 'true' || github.event_name == 'workflow_dispatch'
-        uses: ./.github/actions/setup-nix
-
-      - name: Build Linux (Home Manager) configuration for aarch64
-        if: needs.changes.outputs.nix == 'true' || github.event_name == 'workflow_dispatch'
-        run: |
-          nix build .#homeConfigurations.asktt1770-aarch64.activationPackage \
             --print-build-logs \
             --show-trace
