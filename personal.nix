@@ -22,7 +22,6 @@
     extraCasks = [
       "brave-browser"
       "y3owk1n/tap/neru"
-      "shortcat"
       "tailscale"
       "telegram"
     ];
