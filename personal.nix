@@ -12,10 +12,16 @@
     # casks), while `masApps` is a FULL REPLACEMENT (mkForce). Adding to one is
     # not the same operation as adding to the other.
 
+    # Taps ADDED on top of upstream's list, for the third-party casks below.
+    extraTaps = [
+      "y3owk1n/tap"
+    ];
+
     # Casks ADDED on top of upstream's list (nix-darwin merges by list
     # concatenation, so these are appended to whatever upstream ships).
     extraCasks = [
       "brave-browser"
+      "y3owk1n/tap/neru"
       "shortcat"
       "tailscale"
       "telegram"

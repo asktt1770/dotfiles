@@ -7,7 +7,10 @@ let
   personal = import ../../../personal.nix;
 in
 {
-  # Appended to upstream's casks (list options merge by concatenation).
+  imports = [ ./programs/neru ];
+
+  # Appended to upstream's taps and casks (list options merge by concatenation).
+  homebrew.taps = personal.homebrew.extraTaps;
   homebrew.casks = personal.homebrew.extraCasks;
 
   # Full override of upstream's masApps (see personal.nix for rationale).
