@@ -11,8 +11,11 @@ let
     font-size = 13;
     font-feature = [ "-dlig" ];
 
-    background-opacity = 0.70;
-    background-blur-radius = 20;
+    # Opaque on purpose. Both keys are spelled out rather than omitted so that
+    # an upstream change to either one collides here as a merge conflict,
+    # instead of quietly reinstating a translucent background.
+    background-opacity = 1;
+    background-blur-radius = 0;
 
     theme = "dark:Kanagawa Dragon,light:Kanagawa Lotus";
 
