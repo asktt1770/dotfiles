@@ -20,8 +20,10 @@
     # Casks ADDED on top of upstream's list (nix-darwin merges by list
     # concatenation, so these are appended to whatever upstream ships).
     extraCasks = [
+      "alt-tab"
       "brave-browser"
       "y3owk1n/tap/neru"
+      "stats"
       "tailscale"
       "telegram"
     ];
