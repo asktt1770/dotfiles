@@ -315,7 +315,6 @@ in
       "raycast"
       "steam"
       "t3-code"
-      "telegram"
       "typewhisper/tap/typewhisper"
     ];
 

@@ -25,7 +25,6 @@
       "y3owk1n/tap/neru"
       "stats"
       "tailscale"
-      "telegram"
     ];
 
     # Mac App Store apps — applied with lib.mkForce, i.e. this list FULLY
