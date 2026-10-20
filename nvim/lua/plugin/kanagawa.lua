@@ -43,6 +43,9 @@ return {
 					-- }}
 				}
 			end,
+			-- Mirror Ghostty's `dark:Kanagawa Dragon,light:Kanagawa Lotus`; Neovim
+			-- tracks the terminal's background and reloads the scheme when it flips
+			background = { dark = "dragon", light = "lotus" },
 			globalStatus = true,
 			transparent = TRANSPARENT,
 			compile = true,
