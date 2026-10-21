@@ -382,7 +382,7 @@ cmux の特徴: Claude Code 統合（`claudeCodeIntegration`）、サイドバ�
 | `merge-main`                   | main ブランチをマージ               |
 | `pr-apply-review`              | PRレビュー指摘を適用                |
 | `session-summary-japanese`     | セッションを日本語で要約            |
-| `ask-codex` / `codex-review`   | Codex に質問 / レビュー依頼         |
+| `ask-coding-cli` / `review`    | 他ベンダーCLIに質問 / レビュー依頼  |
 | `council`                      | 複数視点で議論                      |
 | `cmux-debug`                   | cmux のデバッグ                     |
 | `missing-tools`                | 不足ツールの検出                    |

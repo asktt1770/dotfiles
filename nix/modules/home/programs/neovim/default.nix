@@ -22,6 +22,8 @@ in
     # without a switch; nvimx only needs the lock.
     manageConfig = false;
     lockDir = ../../../../../nvim/nvimx-lock;
+    # Only read by env.check, which CI builds
+    configDir = ../../../../../nvim;
 
     lock = {
       projectDir = dotfilesDir;
@@ -31,11 +33,6 @@ in
 
     # Own plugins (`dev = true` in the spec) load from the mutable ghq checkout
     devPath = "~/ghq/github.com/ryoppippi";
-
-    plugins.nixpkgsFallback = [
-      # its spec build runs `nix develop`, which cannot work in the sandbox
-      "parinfer-rust"
-    ];
 
     treesitter.grammars = "all";
 
@@ -53,6 +50,11 @@ in
       ++ (with pkgs; [
 
         tree-sitter # CLI needed by nvim-treesitter to install grammars nixpkgs does not ship (e.g. moonbit)
+
+        # Plugin runtime dependencies, so Neovim does not rely on the login shell's PATH
+        gh # octo.nvim
+        git # git-conflict.nvim and friends
+        copilot-language-server # copilot.lua uses it instead of downloading its own
 
         # Language servers
         lua-language-server # Lua LSP
