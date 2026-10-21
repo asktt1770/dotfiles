@@ -24,7 +24,7 @@
       "brave-browser"
       "y3owk1n/tap/neru"
       "stats"
-      "tailscale"
+      "tailscale-app"
     ];
 
     # Mac App Store apps — applied with lib.mkForce, i.e. this list FULLY
