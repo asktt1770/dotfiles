@@ -105,7 +105,14 @@ fish_add_path $HM_PATH_BIN
 if command -q xcode-select
     set -l xcode_dir (xcode-select -p)
     fish_add_path --append --move $xcode_dir/usr/bin
-    set -gx SDKROOT $xcode_dir/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
+    # Full Xcode and the Command Line Tools lay out the SDK differently;
+    # probing both avoids the cost of `xcrun --show-sdk-path` at startup
+    for sdk in $xcode_dir/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk $xcode_dir/SDKs/MacOSX.sdk
+        if test -d $sdk
+            set -gx SDKROOT $sdk
+            break
+        end
+    end
 end
 
 if not status is-interactive; and command -q direnv
