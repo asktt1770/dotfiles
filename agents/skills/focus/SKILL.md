@@ -10,8 +10,9 @@ user's call, so this skill proposes and the user confirms with one click.
 
 The caller's cmux workspace description is the single source of truth for the
 goal. A `UserPromptSubmit` hook
-(`nix/modules/home/programs/claude-code/focus-goal.nu`) reads it before every
-prompt and, when it starts with `ゴール:`, injects the goal and the guard rule.
+(`nix/modules/darwin/programs/claude-code/focus-goal.nu`, enabled by
+`claude.focusGuard` in `personal.nix`) reads it before every prompt and, when it
+starts with `ゴール:`, injects the goal and the guard rule.
 The goal therefore survives `/clear` and new sessions in the same workspace.
 
 Run every `cmux` command without `--workspace`: cmux targets the caller's

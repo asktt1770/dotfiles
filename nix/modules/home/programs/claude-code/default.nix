@@ -13,7 +13,6 @@ let
   bun = lib.getExe pkgs.bun;
   checkJsonschema = lib.getExe pkgs.check-jsonschema;
   jq = lib.getExe pkgs.jq;
-  nu = lib.getExe pkgs.nushell;
   jsonFormat = pkgs.formats.json { };
 
   baseSettings = {
@@ -43,17 +42,6 @@ let
     skipAutoPermissionPrompt = true;
     skipDangerousModePermissionPrompt = true;
     hooks = {
-      # Injects the main goal set by the `focus` skill; silent outside cmux.
-      UserPromptSubmit = [
-        {
-          hooks = [
-            {
-              type = "command";
-              command = "${nu} ${./focus-goal.nu}";
-            }
-          ];
-        }
-      ];
       PreToolUse = [
         {
           matcher = "Bash";

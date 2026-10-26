@@ -50,6 +50,15 @@
     };
   };
 
+  # Claude Code hooks layered over upstream's settings.json (see
+  # nix/modules/darwin/programs/claude-code).
+  claude = {
+    # Inject the main goal set by the `focus` skill (stored in the cmux
+    # workspace description) before every prompt, so off-goal requests get
+    # parked instead of silently started. Silent outside cmux.
+    focusGuard = true;
+  };
+
   # cmux.json keys deep-merged over upstream's settings (see
   # nix/modules/darwin/programs/cmux). Keys follow the cmux.json schema.
   cmux.settings = {
