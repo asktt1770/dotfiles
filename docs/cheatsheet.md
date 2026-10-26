@@ -384,6 +384,7 @@ cmux の特徴: Claude Code 統合（`claudeCodeIntegration`）、サイドバ�
 | `session-summary-japanese`     | セッションを日本語で要約            |
 | `ask-codex` / `codex-review`   | Codex に質問 / レビュー依頼         |
 | `council`                      | 複数視点で議論                      |
+| `focus` / `unfocus`            | cmux でメインタスクを固定・脱線防止 |
 | `cmux-debug`                   | cmux のデバッグ                     |
 | `missing-tools`                | 不足ツールの検出                    |
 | `nix-github-rate-limit`        | Nix の GitHub レート制限対処        |
