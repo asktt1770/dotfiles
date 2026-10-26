@@ -25,8 +25,12 @@ Undo what the `focus` skill applied to the caller's cmux workspace. Outside cmux
    ```bash
    cmux workspace-action --action unpin
    cmux workspace-action --action clear-color
-   cmux workspace-action --action clear-description
    ```
+
+   Remove only the `ゴール:` line. Lines below it are the user's own notes:
+   when there are any, write them back with
+   `cmux workspace-action --action set-description --description '<remaining lines>'`;
+   otherwise run `cmux workspace-action --action clear-description`.
 
    The `UserPromptSubmit` hook reads the description on every prompt, so
    clearing it stops the guard immediately.

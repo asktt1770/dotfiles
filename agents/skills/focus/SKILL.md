@@ -70,6 +70,10 @@ cmux workspace-action --action set-description --description 'ゴール: PR #55 
 Unpin explicitly for the other quadrants, since re-focusing may move a workspace
 out of DO. Keep the `ゴール: ` prefix exact — the hook matches on it.
 
+The goal is the description's first line. Read the current description first
+(see the `unfocus` skill for the command) and keep the user's own lines: replace
+an existing `ゴール:` line, or put the new one above a description that has none.
+
 Follow-ups are suggestions only:
 
 - DELEGATE: write a checkable `/goal` condition (for example
