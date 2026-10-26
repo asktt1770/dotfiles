@@ -7,7 +7,10 @@ let
   personal = import ../../../personal.nix;
 in
 {
-  imports = [ ./programs/neru ];
+  imports = [
+    ./programs/cmux
+    ./programs/neru
+  ];
 
   # Appended to upstream's taps and casks (list options merge by concatenation).
   homebrew.taps = personal.homebrew.extraTaps;

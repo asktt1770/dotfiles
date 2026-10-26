@@ -49,4 +49,14 @@
       "WhatsApp" = 310633997;
     };
   };
+
+  # cmux.json keys deep-merged over upstream's settings (see
+  # nix/modules/darwin/programs/cmux). Keys follow the cmux.json schema.
+  cmux.settings = {
+    # The sidebar otherwise shows up to 12 lines of the last agent reply under
+    # each workspace, crowding the others out of view. A one-line limit only
+    # truncates to the first sentence, and the unread ring and badge already
+    # signal a waiting agent, so the text is hidden entirely.
+    sidebar.showNotificationMessage = false;
+  };
 }
