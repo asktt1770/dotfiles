@@ -29,9 +29,8 @@ def cmux-run [args: list<string>]: nothing -> string {
     $result.stdout
 }
 
-# The caller's window, workspace and surface refs. Every later command targets
-# them explicitly, so the verification reads the same workspace the writes hit
-# and `clear --close` can only ever close the caller's own tab.
+# The caller's window and workspace refs. Every later command targets them
+# explicitly, so the verification reads the same workspace the writes hit.
 def caller []: nothing -> record {
     if ($env.CMUX_WORKSPACE_ID? | is-empty) {
         error make {msg: 'Not inside cmux ($CMUX_WORKSPACE_ID is unset): there is no workspace to mark.'}
@@ -63,27 +62,6 @@ def workspace-action [target: record, args: list<string>]: nothing -> nothing {
         ...$args
     ]
     | ignore
-}
-
-# The number of surfaces (tabs) across every pane of the caller's workspace.
-def surface-count [target: record]: nothing -> int {
-    cmux-run [
-        tree
-        --json
-        --window
-        $target.window_ref
-        --workspace
-        $target.workspace_ref
-    ]
-    | from json
-    | get windows.workspaces
-    | flatten
-    | where ref == $target.workspace_ref
-    | get panes
-    | flatten
-    | get surfaces
-    | flatten
-    | length
 }
 
 # Split a description into the goal (first line, prefix stripped) and the
@@ -180,9 +158,7 @@ def "main set" [
 # Clear the marker: unpin, clear the colour and remove the goal line, keeping
 # the user's own lines. A description without a goal line is left as it is,
 # since focus did not write it.
-def "main clear" [
-    --close # then close the caller's own tab, ending the session running in it
-]: nothing -> nothing {
+def "main clear" []: nothing -> nothing {
     let target = caller
     let current = split-description ((workspace $target).description? | default '')
     # Trimmed as cmux trims descriptions, so the verification compares like
@@ -201,27 +177,8 @@ def "main clear" [
 
     # No `goal: null` check: a user note that itself starts with the prefix
     # becomes the first line once the goal line is gone.
-    let cleared = verify $target {color: null, pinned: false, description: $description}
+    verify $target {color: null, pinned: false, description: $description}
     | insert cleared_goal $current.goal
-
-    # cmux refuses to close a workspace's last surface, even with --force, so
-    # the session is left for the user to end with /exit.
-    let closing = $close and (surface-count $target) > 1
-    $cleared | insert closed $closing | to json --raw | print
-
-    # Last, because it kills the caller. --force is required since the session
-    # that asked for this is still running in the tab.
-    if $closing {
-        cmux-run [
-            close-surface
-            --force
-            --window
-            $target.window_ref
-            --workspace
-            $target.workspace_ref
-            --surface
-            $target.surface_ref
-        ]
-        | ignore
-    }
+    | to json --raw
+    | print
 }
