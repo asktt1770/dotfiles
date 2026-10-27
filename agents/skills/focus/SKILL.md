@@ -15,12 +15,16 @@ goal. A `UserPromptSubmit` hook
 starts with `ゴール:`, injects the goal and the guard rule.
 The goal therefore survives `/clear` and new sessions in the same workspace.
 
-Run every `cmux` command without `--workspace`: cmux targets the caller's
-workspace by default, which is the one this session runs in. Outside cmux
-(`$CMUX_WORKSPACE_ID` unset), say that focus needs cmux and stop.
+`claude-focus` reads, writes and verifies the marker on the caller's workspace
+in one call each, and prints the result as JSON — trust that output instead of
+re-reading cmux. Outside cmux (`$CMUX_WORKSPACE_ID` unset), say that focus needs
+cmux and stop.
 
 ## Step 1: Infer the quadrant and draft the goal
 
+- No arguments and nothing in the conversation to draft from: run
+  `claude-focus show`. Its `goal` is the current goal (`null` when none is set),
+  and `color` / `pinned` show the current quadrant.
 - Wording: "マスト", "最優先", "絶対" → important; "今日中", "至急", "今すぐ", a
   deadline → urgent. Absence of a signal counts as "not".
 - Draft a one-line goal from the arguments and the conversation: an outcome,
@@ -34,8 +38,9 @@ four options — the inferred quadrant first with "(Recommended)" appended, the
 other three in matrix order. Write labels and previews in the user's language.
 The user edits the goal through "Other".
 
-Each option's `preview` is the matrix with that option's quadrant marked `[*]`,
-then what it does, why it was (or was not) recommended, and the drafted goal:
+Only the recommended option's `preview` carries the full picture: the matrix
+with its quadrant marked `[*]`, what it does, why it was recommended, and the
+drafted goal.
 
 ```text
               Urgent       Not urgent
@@ -50,6 +55,13 @@ then what it does, why it was (or was not) recommended, and the drafted goal:
 ゴール: PR #55 をマージ可能にする
 ```
 
+The other three previews are one line each — what it does and why it was not
+recommended — since the matrix is already on screen:
+
+```text
+適用: 色 緑 (#2ECC71) ・ピン解除 ／ 理由: 期限の指定がないので緊急ではない
+```
+
 If the user answers through "Other", treat the text as the new goal line, keep
 the recommended quadrant, and apply without asking again.
 
@@ -62,22 +74,17 @@ the recommended quadrant, and apply without asking again.
 | DELEGATE (urgent only)  | `#F1C40F` | unpin | Propose a `/goal` condition so it can run unattended     |
 | DROP (neither)          | `#95A5A6` | unpin | Suggest parking it as an issue and closing the workspace |
 
-Use these hex values, not cmux's named colours: the named `Amber` is a dark
-ochre that does not read as yellow in the sidebar, and `Charcoal` is darker than
-the intended grey. Quote them, or the shell treats `#` as the start of a comment.
+Apply with one command, quoting the goal:
 
 ```bash
-cmux workspace-action --action set-color --color '#E74C3C'
-cmux workspace-action --action pin
-cmux workspace-action --action set-description --description 'ゴール: PR #55 をマージ可能にする'
+claude-focus set DO 'PR #55 をマージ可能にする'
 ```
 
-Unpin explicitly for the other quadrants, since re-focusing may move a workspace
-out of DO. Keep the `ゴール: ` prefix exact — the hook matches on it.
-
-The goal is the description's first line. Read the current description first
-(see the `unfocus` skill for the command) and keep the user's own lines: replace
-an existing `ゴール:` line, or put the new one above a description that has none.
+It sets the colour and the pin state, makes `ゴール: <goal>` the description's
+first line while keeping the user's own lines below it, then reads the
+workspace back and fails if `custom_color`, `pinned` or `description` did not
+take. On success it prints the applied marker; on failure, report its error
+rather than retrying by hand.
 
 Follow-ups are suggestions only:
 

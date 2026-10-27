@@ -2,7 +2,8 @@
 # upstream-tracked home module, so that module stays identical to upstream.
 # Its settings are a `let` binding rather than an option, so they cannot be
 # merged at evaluation time; instead a second activation step edits the live
-# file right after upstream's.
+# file right after upstream's. It also ships `claude-focus`, the CLI behind the
+# fork-only `focus` and `unfocus` skills.
 _:
 let
   personal = import ../../../../../personal.nix;
@@ -18,6 +19,12 @@ in
     let
       focusGoal = pkgs.writeShellScriptBin "claude-focus-goal" ''
         exec ${lib.getExe pkgs.nushell} ${./focus-goal.nu}
+      '';
+
+      # Run by the `focus` and `unfocus` skills, which are installed whether or
+      # not the guard is on, so this ships unconditionally.
+      focusCli = pkgs.writeShellScriptBin "claude-focus" ''
+        exec ${lib.getExe pkgs.nushell} ${./focus.nu} "$@"
       '';
 
       inherit (personal.claude) focusGuard;
@@ -41,7 +48,7 @@ in
       jq = lib.getExe pkgs.jq;
     in
     {
-      home.packages = lib.optional focusGuard focusGoal;
+      home.packages = [ focusCli ] ++ lib.optional focusGuard focusGoal;
 
       home.activation.writePersonalClaudeHooks =
         lib.hm.dag.entryBetween [ "validateClaudeSettings" ] [ "writeClaudeSettings" ]

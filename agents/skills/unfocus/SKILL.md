@@ -8,32 +8,22 @@ description: Clears the main-task marker the `focus` skill set on the current cm
 Undo what the `focus` skill applied to the caller's cmux workspace. Outside cmux
 (`$CMUX_WORKSPACE_ID` unset), say there is nothing to clear and stop.
 
-1. Read the current description. `cmux identify --json` gives the caller's
-   `window_ref` and `workspace_ref`; `workspace list` only covers one window, so
-   scope it to the caller's:
+1. Clear the marker in one call:
 
    ```bash
-   cmux identify --json | jq -c .caller
-   cmux workspace list --json --window window:1 | jq '.workspaces[] | select(.ref == "workspace:3") | .description'
+   claude-focus clear
    ```
 
-   If it does not start with `ゴール:`, focus did not set it — ask before
-   clearing, since it may be the user's own note.
+   It unpins, clears the colour and removes only the `ゴール:` line, writing the
+   user's own lines below it back. It then reads the workspace back, fails if
+   anything did not take, and prints the result with `cleared_goal`.
 
-2. Clear the marker:
-
-   ```bash
-   cmux workspace-action --action unpin
-   cmux workspace-action --action clear-color
-   ```
-
-   Remove only the `ゴール:` line. Lines below it are the user's own notes:
-   when there are any, write them back with
-   `cmux workspace-action --action set-description --description '<remaining lines>'`;
-   otherwise run `cmux workspace-action --action clear-description`.
+   If it refuses because the description does not start with `ゴール:`, focus
+   did not set it and it may be the user's own note. Ask before clearing, and
+   rerun with `--force` only if they agree; that clears the whole description.
 
    The `UserPromptSubmit` hook reads the description on every prompt, so
    clearing it stops the guard immediately.
 
-3. Report the goal that was cleared in one line. Leave `cmux todo` untouched —
-   it belongs to the user.
+2. Report the cleared goal in one line. Leave `cmux todo` untouched — it belongs
+   to the user.

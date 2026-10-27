@@ -11,7 +11,8 @@
 # Every failure path is silent: this runs before every prompt, and a broken
 # cmux socket must never block or clutter the conversation.
 
-# Written by the `focus` skill and cleared by `unfocus`; keep the three in sync.
+# Written and cleared by `focus.nu` for the `focus` and `unfocus` skills; keep
+# the two in sync.
 const GOAL_PREFIX = 'ゴール:'
 
 # Parsed `--json` output of a cmux command, or null when cmux fails. The
