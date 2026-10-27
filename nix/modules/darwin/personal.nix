@@ -8,6 +8,7 @@ let
 in
 {
   imports = [
+    ./programs/claude-code
     ./programs/cmux
     ./programs/neru
   ];
