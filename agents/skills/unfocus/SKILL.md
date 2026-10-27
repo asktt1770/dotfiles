@@ -21,5 +21,9 @@ user's own lines below it (a description without that line is left alone). It
 verifies the result, then closes the tab this session runs in. Only that tab
 closes; other tabs in the workspace, and the workspace itself, stay.
 
-Since the tab closes, there is no report afterwards. If the command fails, the
-tab stays open: report the error in one line.
+Since the tab closes, there is no report afterwards. Two cases leave it open:
+
+- `"closed": false` — this is the workspace's only tab, which cmux refuses to
+  close. Reply with one line, for example
+  `ゴール「PR #55 をマージ可能にする」を外しました。/exit で終了してください`.
+- The command fails — report the error in one line.

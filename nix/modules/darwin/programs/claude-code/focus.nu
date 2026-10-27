@@ -65,6 +65,27 @@ def workspace-action [target: record, args: list<string>]: nothing -> nothing {
     | ignore
 }
 
+# The number of surfaces (tabs) across every pane of the caller's workspace.
+def surface-count [target: record]: nothing -> int {
+    cmux-run [
+        tree
+        --json
+        --window
+        $target.window_ref
+        --workspace
+        $target.workspace_ref
+    ]
+    | from json
+    | get windows.workspaces
+    | flatten
+    | where ref == $target.workspace_ref
+    | get panes
+    | flatten
+    | get surfaces
+    | flatten
+    | length
+}
+
 # Split a description into the goal (first line, prefix stripped) and the
 # user's own notes below it. A description without the prefix is all notes.
 # The notes stay the exact original text, trailing blank lines included,
@@ -180,14 +201,17 @@ def "main clear" [
 
     # No `goal: null` check: a user note that itself starts with the prefix
     # becomes the first line once the goal line is gone.
-    verify $target {color: null, pinned: false, description: $description}
+    let cleared = verify $target {color: null, pinned: false, description: $description}
     | insert cleared_goal $current.goal
-    | to json --raw
-    | print
+
+    # cmux refuses to close a workspace's last surface, even with --force, so
+    # the session is left for the user to end with /exit.
+    let closing = $close and (surface-count $target) > 1
+    $cleared | insert closed $closing | to json --raw | print
 
     # Last, because it kills the caller. --force is required since the session
     # that asked for this is still running in the tab.
-    if $close {
+    if $closing {
         cmux-run [
             close-surface
             --force
