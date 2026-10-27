@@ -1,6 +1,6 @@
 ---
 name: unfocus
-description: Clears the main-task marker the `focus` skill set on the current cmux workspace (pin, colour, goal description), which also stops the derailment guard. Use for `/unfocus` or when the user says the goal is done or dropped.
+description: Clears the main-task marker the `focus` skill set on the current cmux workspace (pin, colour, goal description). Use for `/unfocus` or when the user says the goal is done or dropped.
 ---
 
 # Unfocus
@@ -8,32 +8,21 @@ description: Clears the main-task marker the `focus` skill set on the current cm
 Undo what the `focus` skill applied to the caller's cmux workspace. Outside cmux
 (`$CMUX_WORKSPACE_ID` unset), say there is nothing to clear and stop.
 
-1. Read the current description. `cmux identify --json` gives the caller's
-   `window_ref` and `workspace_ref`; `workspace list` only covers one window, so
-   scope it to the caller's:
+1. Run one command:
 
    ```bash
-   cmux identify --json | jq -c .caller
-   cmux workspace list --json --window window:1 | jq '.workspaces[] | select(.ref == "workspace:3") | .description'
+   claude-focus clear
    ```
 
-   If it does not start with `ゴール:`, focus did not set it — ask before
-   clearing, since it may be the user's own note.
+   It unpins, clears the colour and removes only the `ゴール:` line, keeping the
+   user's own lines below it (a description without that line is left alone),
+   then verifies the result. If it fails, report the error in one line and stop.
 
-2. Clear the marker:
+2. Reply with one line naming the cleared goal and ending with the `/exit`
+   prompt, for example:
 
-   ```bash
-   cmux workspace-action --action unpin
-   cmux workspace-action --action clear-color
+   ```text
+   ゴール「PR #55 をマージ可能にする」を外しました。/exit で終了してください
    ```
 
-   Remove only the `ゴール:` line. Lines below it are the user's own notes:
-   when there are any, write them back with
-   `cmux workspace-action --action set-description --description '<remaining lines>'`;
-   otherwise run `cmux workspace-action --action clear-description`.
-
-   The `UserPromptSubmit` hook reads the description on every prompt, so
-   clearing it stops the guard immediately.
-
-3. Report the goal that was cleared in one line. Leave `cmux todo` untouched —
-   it belongs to the user.
+   Do not end the session yourself.
