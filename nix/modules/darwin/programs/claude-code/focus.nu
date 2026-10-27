@@ -136,12 +136,9 @@ def "main set" [
 
     let target = caller
     let notes = (split-description ((workspace $target).description? | default '')).notes
-    let goal_line = $"($GOAL_PREFIX) ($goal)"
-    let description = if ($notes | is-empty) {
-        $goal_line
-    } else {
-        $"($goal_line)\n($notes)"
-    }
+    # Trimmed as cmux trims descriptions, so the verification compares like
+    # with like.
+    let description = $"($GOAL_PREFIX) ($goal)\n($notes)" | str trim
 
     workspace-action $target [--action set-color --color $style.color]
     workspace-action $target [
@@ -167,7 +164,9 @@ def "main clear" [
 ]: nothing -> nothing {
     let target = caller
     let current = split-description ((workspace $target).description? | default '')
-    let description = $current.notes
+    # Trimmed as cmux trims descriptions, so the verification compares like
+    # with like.
+    let description = $current.notes | str trim
 
     workspace-action $target [--action unpin]
     workspace-action $target [--action clear-color]
@@ -179,12 +178,9 @@ def "main clear" [
         }
     }
 
-    verify $target {
-        goal: null
-        color: null
-        pinned: false
-        description: $description
-    }
+    # No `goal: null` check: a user note that itself starts with the prefix
+    # becomes the first line once the goal line is gone.
+    verify $target {color: null, pinned: false, description: $description}
     | insert cleared_goal $current.goal
     | to json --raw
     | print
