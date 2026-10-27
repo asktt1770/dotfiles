@@ -1,29 +1,25 @@
 ---
 name: unfocus
-description: Clears the main-task marker the `focus` skill set on the current cmux workspace (pin, colour, goal description), which also stops the derailment guard. Use for `/unfocus` or when the user says the goal is done or dropped.
+description: Clears the main-task marker the `focus` skill set on the current cmux workspace (pin, colour, goal description) and closes this session's own tab. Use for `/unfocus` or when the user says the goal is done or dropped.
 ---
 
 # Unfocus
 
-Undo what the `focus` skill applied to the caller's cmux workspace. Outside cmux
-(`$CMUX_WORKSPACE_ID` unset), say there is nothing to clear and stop.
+Undo what the `focus` skill applied to the caller's cmux workspace, then end
+this session. Outside cmux (`$CMUX_WORKSPACE_ID` unset), say there is nothing to
+clear and stop.
 
-1. Clear the marker in one call:
+Run one command, with nothing before it — no checks for uncommitted changes or
+running tasks; the user handles those:
 
-   ```bash
-   claude-focus clear
-   ```
+```bash
+claude-focus clear --close
+```
 
-   It unpins, clears the colour and removes only the `ゴール:` line, writing the
-   user's own lines below it back. It then reads the workspace back, fails if
-   anything did not take, and prints the result with `cleared_goal`.
+It unpins, clears the colour and removes only the `ゴール:` line, keeping the
+user's own lines below it (a description without that line is left alone). It
+verifies the result, then closes the tab this session runs in. Only that tab
+closes; other tabs in the workspace, and the workspace itself, stay.
 
-   If it refuses because the description does not start with `ゴール:`, focus
-   did not set it and it may be the user's own note. Ask before clearing, and
-   rerun with `--force` only if they agree; that clears the whole description.
-
-   The `UserPromptSubmit` hook reads the description on every prompt, so
-   clearing it stops the guard immediately.
-
-2. Report the cleared goal in one line. Leave `cmux todo` untouched — it belongs
-   to the user.
+Since the tab closes, there is no report afterwards. If the command fails, the
+tab stays open: report the error in one line.

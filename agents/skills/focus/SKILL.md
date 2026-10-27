@@ -1,132 +1,63 @@
 ---
 name: focus
-description: Marks the main task of the current cmux workspace (Eisenhower quadrant colour, pin, goal description) and guards against off-goal requests. Use for `/focus <goal>` or priority declarations such as "マスト", "今日中", "これに集中したい", "最優先".
+description: Marks the main task of the current cmux workspace with an Eisenhower quadrant colour, pin and goal description, chosen by the user in one question screen. Use for `/focus [goal]` or priority declarations such as "マスト", "今日中", "これに集中したい", "最優先".
 ---
 
 # Focus
 
-cmux holds the visible marker; Claude Code guards the goal. Importance is the
-user's call, so this skill proposes and the user confirms with one click.
+The marker lives on the caller's cmux workspace: a colour and pin for the
+quadrant, and `ゴール: <goal>` as the first line of the description. It is a
+sidebar marker for the user; nothing reads it back during the session.
 
-The caller's cmux workspace description is the single source of truth for the
-goal. A `UserPromptSubmit` hook
-(`nix/modules/darwin/programs/claude-code/focus-goal.nu`, enabled by
-`claude.focusGuard` in `personal.nix`) reads it before every prompt and, when it
-starts with `ゴール:`, injects the goal and the guard rule.
-The goal therefore survives `/clear` and new sessions in the same workspace.
+Importance is the user's call, so do not infer the quadrant — the user picks
+it. Outside cmux (`$CMUX_WORKSPACE_ID` unset), say that focus needs cmux and
+stop.
 
-`claude-focus` reads, writes and verifies the marker on the caller's workspace
-in one call each, and prints the result as JSON — trust that output instead of
-re-reading cmux. Outside cmux (`$CMUX_WORKSPACE_ID` unset), say that focus needs
-cmux and stop.
+## Step 1: Draft goal candidates
 
-## Step 1: Infer the quadrant and draft the goal
+Draft two or three one-line goals from the arguments and the conversation.
+Keep this quick. Each is an outcome, not an activity ("PR #55 をマージ可能にする",
+not "PR を見る"), short enough for the sidebar (about 40 characters). Write them
+in the user's language.
 
-- No arguments and nothing in the conversation to draft from: run
-  `claude-focus show`. Its `goal` is the current goal (`null` when none is set),
-  and `color` / `pinned` show the current quadrant.
-- Wording: "マスト", "最優先", "絶対" → important; "今日中", "至急", "今すぐ", a
-  deadline → urgent. Absence of a signal counts as "not".
-- Draft a one-line goal from the arguments and the conversation: an outcome,
-  not an activity ("PR #55 をマージ可能にする", not "PR を見る"). Keep it short
-  enough for the sidebar, about 40 characters.
+## Step 2: Ask once, two questions
 
-## Step 2: Confirm with AskUserQuestion
+One AskUserQuestion call with two single-select questions, no previews and no
+"(Recommended)":
 
-Always confirm, even when the wording is explicit. One single-select question,
-four options — the inferred quadrant first with "(Recommended)" appended, the
-other three in matrix order. Write labels and previews in the user's language.
-The user edits the goal through "Other".
+1. Quadrant — four options in this order, each described by what it applies:
 
-Only the recommended option's `preview` carries the full picture: the matrix
-with its quadrant marked `[*]`, what it does, why it was recommended, and the
-drafted goal.
+   | Label    | Description                          |
+   | -------- | ------------------------------------ |
+   | DO       | 緊急かつ重要: 赤 (#E74C3C)・ピン留め |
+   | PLAN     | 重要のみ: 緑 (#2ECC71)               |
+   | DELEGATE | 緊急のみ: 黄 (#F1C40F)               |
+   | DROP     | どちらでもない: 灰 (#95A5A6)         |
 
-```text
-              Urgent       Not urgent
-           +------------+------------+
- Important | [*] DO     |    PLAN    |
-           +------------+------------+
- Not imp.  |  DELEGATE  |    DROP    |
-           +------------+------------+
-
-適用: 色 赤 (#E74C3C) ・ピン留め
-理由: 「今日中」「マスト」→ 緊急かつ重要
-ゴール: PR #55 をマージ可能にする
-```
-
-The other three previews are one line each — what it does and why it was not
-recommended — since the matrix is already on screen:
-
-```text
-適用: 色 緑 (#2ECC71) ・ピン解除 ／ 理由: 期限の指定がないので緊急ではない
-```
-
-If the user answers through "Other", treat the text as the new goal line, keep
-the recommended quadrant, and apply without asking again.
+2. Goal — the drafted candidates as options. The user types their own through
+   "Other".
 
 ## Step 3: Apply
 
-| Quadrant                | Colour    | Pin   | Follow-up                                                |
-| ----------------------- | --------- | ----- | -------------------------------------------------------- |
-| DO (urgent & important) | `#E74C3C` | pin   | —                                                        |
-| PLAN (important only)   | `#2ECC71` | unpin | —                                                        |
-| DELEGATE (urgent only)  | `#F1C40F` | unpin | Propose a `/goal` condition so it can run unattended     |
-| DROP (neither)          | `#95A5A6` | unpin | Suggest parking it as an issue and closing the workspace |
-
-Apply with one command, quoting the goal:
+Run one command with the chosen quadrant and goal, quoting the goal:
 
 ```bash
 claude-focus set DO 'PR #55 をマージ可能にする'
 ```
 
-It sets the colour and the pin state, makes `ゴール: <goal>` the description's
-first line while keeping the user's own lines below it, then reads the
-workspace back and fails if `custom_color`, `pinned` or `description` did not
-take. On success it prints the applied marker; on failure, report its error
-rather than retrying by hand.
+It sets the colour and pin state, makes `ゴール: <goal>` the description's first
+line while keeping the user's own lines below it, then reads the workspace back
+and fails if anything did not take. Report its error rather than retrying by
+hand.
 
-Follow-ups are suggestions only:
+## Step 4: Report
 
-- DELEGATE: write a checkable `/goal` condition (for example
-  `/goal PR #55 の CI が緑になり、レビューコメントに全て返信済み`) for the user to
-  paste. Never run `/goal` yourself.
-- DROP: offer to park it with the parking rules below. Never close the workspace
-  yourself.
+One line, for example:
 
-Finish with one line naming the goal and the quadrant, then carry on with the
-goal.
+```text
+🔴 DO で設定しました（ピン留め）: PR #55 をマージ可能にする
+```
 
-## Derailment guard
+Then carry on with whatever else the user asked for in the same message.
 
-While a goal is set, the hook injects it before every prompt. When a request
-does not serve the goal, do not start it and do not refuse it. Ask with
-AskUserQuestion:
-
-1. **Park it as an issue** — file it where this place keeps work (below).
-2. **Add it to the to-do list** — `cmux todo add '<one-line summary>'`.
-3. **Switch the main goal to it** — rerun Steps 1–3 for the new request, then
-   start it.
-
-Not off-goal: work that serves the goal (including its prerequisites and
-blockers), quick factual questions answered in a sentence or two, follow-ups on
-the current answer, and `/focus` / `/unfocus`. When unsure, ask — the question
-is one click.
-
-Parking destination for option 1, first match wins:
-
-1. The repository's own CLAUDE.md / AGENTS.md rules for capturing tasks.
-2. `gh issue create` when `gh repo view` succeeds. Title the request as a task;
-   in the body, state the request, the context needed to pick it up cold, and
-   that it was parked while working on the goal.
-3. Neither: drop option 1 from the question, leaving the to-do list as the
-   parking place.
-
-`cmux todo` belongs to the user. Write to it only when they choose option 2.
-
-After parking, report it in one line (issue URL or to-do text) and return to the
-goal.
-
-## Unfocus
-
-Use the `unfocus` skill to clear the marker, which also stops the guard.
+To change the goal, the user runs `/focus` again. To finish, `/unfocus`.

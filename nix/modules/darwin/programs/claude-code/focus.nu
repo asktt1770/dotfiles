@@ -6,7 +6,7 @@
 # instead of several. Every subcommand prints one JSON record on success and
 # fails with an actionable error otherwise.
 
-# Read by the `focus-goal.nu` hook; keep the two in sync.
+# Marks the goal line, so `clear` removes only what `set` wrote.
 const GOAL_PREFIX = 'ゴール:'
 
 # Eisenhower quadrant → marker. Hex rather than cmux's named colours: the
@@ -29,8 +29,9 @@ def cmux-run [args: list<string>]: nothing -> string {
     $result.stdout
 }
 
-# The caller's window and workspace refs. Every later command targets them
-# explicitly, so the verification reads the same workspace the writes hit.
+# The caller's window, workspace and surface refs. Every later command targets
+# them explicitly, so the verification reads the same workspace the writes hit
+# and `clear --close` can only ever close the caller's own tab.
 def caller []: nothing -> record {
     if ($env.CMUX_WORKSPACE_ID? | is-empty) {
         error make {msg: 'Not inside cmux ($CMUX_WORKSPACE_ID is unset): there is no workspace to mark.'}
@@ -111,12 +112,6 @@ def main []: nothing -> nothing {
     print (help main)
 }
 
-# Print the current marker: goal (null when focus did not set one), colour,
-# pin state and the full description.
-def "main show" []: nothing -> nothing {
-    marker (workspace (caller)) | to json --raw | print
-}
-
 # Mark the goal: set the quadrant's colour and pin state, and make the goal the
 # description's first line while keeping the user's own lines below it.
 def "main set" [
@@ -155,28 +150,28 @@ def "main set" [
 }
 
 # Clear the marker: unpin, clear the colour and remove the goal line, keeping
-# the user's own lines. Refuses when the description has no goal line, since it
-# may be the user's own note; rerun with --force once the user agrees to clear it.
+# the user's own lines. A description without a goal line is left as it is,
+# since focus did not write it.
 def "main clear" [
-    --force # clear a description that focus did not write
+    --close # then close the caller's own tab, ending the session running in it
 ]: nothing -> nothing {
     let target = caller
-    let current = split-description ((workspace $target).description? | default '')
-
-    if $current.goal == null and not $force {
-        error make {msg: $"The description does not start with '($GOAL_PREFIX)', so focus did not set it. Ask the user, then rerun with --force to clear it."}
+    let original = (workspace $target).description? | default ''
+    let current = split-description $original
+    let description = if $current.goal == null {
+        $original
+    } else {
+        $current.notes | str join "\n"
     }
-
-    # --force on a description without a goal line clears all of it.
-    let notes = if $current.goal == null { [] } else { $current.notes }
-    let description = $notes | str join "\n"
 
     workspace-action $target [--action unpin]
     workspace-action $target [--action clear-color]
-    if ($description | is-empty) {
-        workspace-action $target [--action clear-description]
-    } else {
-        workspace-action $target [--action set-description --description $description]
+    if $current.goal != null {
+        if ($description | is-empty) {
+            workspace-action $target [--action clear-description]
+        } else {
+            workspace-action $target [--action set-description --description $description]
+        }
     }
 
     verify $target {
@@ -188,4 +183,20 @@ def "main clear" [
     | insert cleared_goal $current.goal
     | to json --raw
     | print
+
+    # Last, because it kills the caller. --force is required since the session
+    # that asked for this is still running in the tab.
+    if $close {
+        cmux-run [
+            close-surface
+            --force
+            --window
+            $target.window_ref
+            --workspace
+            $target.workspace_ref
+            --surface
+            $target.surface_ref
+        ]
+        | ignore
+    }
 }
