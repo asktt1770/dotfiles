@@ -20,6 +20,8 @@ in
       git-lfs
       ghq
       mergiraf
+      # `, <command>`; picks the package itself in an agent's tty-less shell
+      comma-auto-pick
       # Security
       tirith
       # Code review TUI

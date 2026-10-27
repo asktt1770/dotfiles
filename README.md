@@ -28,14 +28,10 @@ asktt1770's dotfiles, managed as a Nix flake: nix-darwin plus Home Manager on ma
 ## Setup
 
 Installing Nix is the one manual step, because everything after it is a Nix
-command. Pick the installer for the platform:
+command. The same installer covers macOS and Linux:
 
 ```sh
-# macOS
 curl -sSfL https://artifacts.nixos.org/nix-installer | sh -s -- install --enable-flakes
-
-# Linux
-curl --proto '=https' --tlsv1.2 -sSf -L https://install.nixos.org | sh -s -- install
 ```
 
 Then one command does the rest, on both platforms:
