@@ -66,18 +66,23 @@ def workspace-action [target: record, args: list<string>]: nothing -> nothing {
 }
 
 # Split a description into the goal (first line, prefix stripped) and the
-# user's own lines below it. A description without the prefix is all notes.
+# user's own notes below it. A description without the prefix is all notes.
+# The notes stay the exact original text, trailing blank lines included,
+# because only the first newline is split on.
 def split-description [description: string]: nothing -> record {
-    let lines = $description | lines
-    match $lines {
-        [$first, ..$rest] if ($first | str starts-with $GOAL_PREFIX) => {
-            # Without --all, `str replace` drops only the first match: the prefix.
-            {
-                goal: ($first | str replace $GOAL_PREFIX '' | str trim)
-                notes: $rest
-            }
-        }
-        _ => {goal: null, notes: $lines}
+    if not ($description | str starts-with $GOAL_PREFIX) {
+        return {goal: null, notes: $description}
+    }
+    let parts = $description | split row --number 2 "\n"
+    {
+        # Without --all, `str replace` drops only the first match: the prefix.
+        goal: (
+            $parts
+            | first
+            | str replace $GOAL_PREFIX ''
+            | str trim
+        )
+        notes: ($parts | get -o 1 | default '')
     }
 }
 
@@ -131,7 +136,12 @@ def "main set" [
 
     let target = caller
     let notes = (split-description ((workspace $target).description? | default '')).notes
-    let description = [$"($GOAL_PREFIX) ($goal)" ...$notes] | str join "\n"
+    let goal_line = $"($GOAL_PREFIX) ($goal)"
+    let description = if ($notes | is-empty) {
+        $goal_line
+    } else {
+        $"($goal_line)\n($notes)"
+    }
 
     workspace-action $target [--action set-color --color $style.color]
     workspace-action $target [
@@ -156,13 +166,8 @@ def "main clear" [
     --close # then close the caller's own tab, ending the session running in it
 ]: nothing -> nothing {
     let target = caller
-    let original = (workspace $target).description? | default ''
-    let current = split-description $original
-    let description = if $current.goal == null {
-        $original
-    } else {
-        $current.notes | str join "\n"
-    }
+    let current = split-description ((workspace $target).description? | default '')
+    let description = $current.notes
 
     workspace-action $target [--action unpin]
     workspace-action $target [--action clear-color]
