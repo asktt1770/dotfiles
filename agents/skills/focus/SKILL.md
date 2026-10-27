@@ -45,7 +45,7 @@ then what it does, why it was (or was not) recommended, and the drafted goal:
  Not imp.  |  DELEGATE  |    DROP    |
            +------------+------------+
 
-適用: 色 Red ・ピン留め
+適用: 色 赤 (#E74C3C) ・ピン留め
 理由: 「今日中」「マスト」→ 緊急かつ重要
 ゴール: PR #55 をマージ可能にする
 ```
@@ -55,15 +55,19 @@ the recommended quadrant, and apply without asking again.
 
 ## Step 3: Apply
 
-| Quadrant                | Colour     | Pin   | Follow-up                                                |
-| ----------------------- | ---------- | ----- | -------------------------------------------------------- |
-| DO (urgent & important) | `Red`      | pin   | —                                                        |
-| PLAN (important only)   | `Green`    | unpin | —                                                        |
-| DELEGATE (urgent only)  | `Amber`    | unpin | Propose a `/goal` condition so it can run unattended     |
-| DROP (neither)          | `Charcoal` | unpin | Suggest parking it as an issue and closing the workspace |
+| Quadrant                | Colour    | Pin   | Follow-up                                                |
+| ----------------------- | --------- | ----- | -------------------------------------------------------- |
+| DO (urgent & important) | `#E74C3C` | pin   | —                                                        |
+| PLAN (important only)   | `#2ECC71` | unpin | —                                                        |
+| DELEGATE (urgent only)  | `#F1C40F` | unpin | Propose a `/goal` condition so it can run unattended     |
+| DROP (neither)          | `#95A5A6` | unpin | Suggest parking it as an issue and closing the workspace |
+
+Use these hex values, not cmux's named colours: the named `Amber` is a dark
+ochre that does not read as yellow in the sidebar, and `Charcoal` is darker than
+the intended grey. Quote them, or the shell treats `#` as the start of a comment.
 
 ```bash
-cmux workspace-action --action set-color --color Red
+cmux workspace-action --action set-color --color '#E74C3C'
 cmux workspace-action --action pin
 cmux workspace-action --action set-description --description 'ゴール: PR #55 をマージ可能にする'
 ```
