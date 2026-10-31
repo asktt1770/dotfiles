@@ -19,4 +19,11 @@ in
 
   # Full override of upstream's masApps (see personal.nix for rationale).
   homebrew.masApps = lib.mkForce personal.homebrew.masApps;
+
+  # macOS ships with the application firewall off and upstream never enables
+  # it; stealth mode also stops the machine answering probes on public Wi-Fi.
+  networking.applicationFirewall = {
+    enable = true;
+    enableStealthMode = true;
+  };
 }
