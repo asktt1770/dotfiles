@@ -112,11 +112,6 @@
                       "^nix run nixpkgs#home-manager -- switch --flake .#${homeConfigName} o+e>| ^${nom}"
                   }
                 }
-                print "Clearing fish cache..."
-                let tmpdir = $env | get --optional TMPDIR | default ""
-                if ($tmpdir | is-not-empty) {
-                  rm --recursive --force ($tmpdir | path join "fish-cache")
-                }
                 print "Done!"
               }
             ''

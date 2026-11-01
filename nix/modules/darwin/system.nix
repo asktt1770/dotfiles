@@ -81,6 +81,11 @@ in
         echo "Removing quarantine from Arto.app..."
         xattr -dr com.apple.quarantine /Applications/Arto.app 2>/dev/null || true
       fi
+
+      # Stay awake on AC power so T3 Code remains reachable through T3 Connect
+      # while the screen is locked; battery keeps the default so an unplugged
+      # laptop still sleeps.
+      /usr/bin/pmset -c sleep 0
     '';
 
     activationScripts.userDefaults.text = lib.mkAfter ''
@@ -269,9 +274,8 @@ in
     # 1Password CLI (GUI is managed via Homebrew cask - requires /Applications)
     _1password.enable = true;
 
-    # nix-index for command-not-found and comma
+    # nix-index for command-not-found; comma is comma-auto-pick in home.packages
     nix-index.enable = true;
-    nix-index-database.comma.enable = true;
   };
 
   # Homebrew configuration

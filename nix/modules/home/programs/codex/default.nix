@@ -46,11 +46,11 @@ let
   );
 
   settings = {
-    model = "gpt-6-luna";
+    model = "gpt-6.1-sol";
     approval_policy = "on-request";
     approvals_reviewer = "auto_review";
     allow_login_shell = true;
-    model_reasoning_effort = "max";
+    model_reasoning_effort = "high";
     web_search_request = true;
     personality = "pragmatic";
     service_tier = "standard"; # "standard" or "fast"
@@ -92,6 +92,9 @@ let
     plugins."github@openai-curated" = {
       enabled = true;
     };
+
+    # For sessions outside T3 Code; its threads get `t3-code` injected.
+    mcp_servers.t3.url = "http://127.0.0.1:3773/mcp";
   };
 in
 {
