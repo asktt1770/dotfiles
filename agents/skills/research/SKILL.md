@@ -1,6 +1,6 @@
 ---
 name: research
-description: Delegates web research across several sources to Codex, then verifies its report before relaying it. Use when a question needs sources compared, options surveyed, or claims checked — not for a single lookup or for investigating this codebase.
+description: Delegates research to Codex, then verifies its report before relaying it. Use when the user asks to research or look into something ("調べて", "調査して") — not for a single lookup.
 ---
 
 # Research
