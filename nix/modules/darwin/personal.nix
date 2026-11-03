@@ -25,5 +25,8 @@ in
   networking.applicationFirewall = {
     enable = true;
     enableStealthMode = true;
+    # Otherwise any downloaded app with a valid signature gets inbound access
+    # silently, which leaves the firewall little to filter.
+    allowSignedApp = false;
   };
 }
