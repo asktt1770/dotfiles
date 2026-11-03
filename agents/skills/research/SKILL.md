@@ -20,7 +20,7 @@ Answer a single lookup yourself: one fact from one authoritative source, such as
 For anything larger, settle the question before writing the brief. Codex follows a brief literally and sees none of this conversation, so intent the brief drops is lost.
 
 1. Work out what the user will do with the answer, what would count as an answer, and the bounds the request implies: platform, version, period, audience.
-2. List the plausible readings of the request. Ask the user only when they would send the research somewhere different or change the conclusion, and offer those readings as the options.
+2. List the plausible readings of the request. Ask the user when they would send the research somewhere different or change the conclusion, offering those readings as the options, or when the brief needs something only the user knows. Say exactly what you need confirmed.
 3. When one reading is clearly the most plausible, take it without asking and state it in both the brief and the report.
 4. Keep the user's own terms in the brief, and do not add a preferred answer or a narrower question than the user asked.
 
