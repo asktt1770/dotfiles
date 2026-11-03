@@ -27,6 +27,8 @@ in
     inherit system;
 
     modules = [
+      { nixpkgs.pkgs = darwinPkgs; }
+
       nix-homebrew.darwinModules.nix-homebrew
       {
         nix-homebrew = {
@@ -54,11 +56,8 @@ in
       {
         home-manager = {
           backupFileExtension = "before-nix-secure-enclave-key";
-          useGlobalPkgs = false;
+          useGlobalPkgs = true;
           useUserPackages = true;
-          extraSpecialArgs = {
-            pkgs = darwinPkgs;
-          };
           users.${username} =
             {
               pkgs,
@@ -92,7 +91,6 @@ in
                   inherit local-skills agentSkillsLib skillRegistry;
                   homedir = darwinHomedir;
                   inherit system;
-                  nodePackages = import ../../packages/node { inherit pkgs; };
                 })
 
                 (import ../../modules/darwin {

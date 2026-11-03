@@ -169,7 +169,6 @@ Git, Neovim, Fish, cmux, Karabiner, Ghostty の設定
 | --------- | ------ | --------------------------------------------- |
 | 1Password | 高     | マスターパスワード / Secret Key を控える      |
 | Raycast   | 中     | Settings > Advanced > Export                  |
-| Cursor    | 中     | Settings Sync を確認                          |
 | Obsidian  | 中     | Vault が iCloud/Google Drive にあることを確認 |
 | SSH 鍵    | 高     | 1Password 管理 or `~/.ssh/` をコピー          |
 

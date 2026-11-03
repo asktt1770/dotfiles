@@ -9,9 +9,15 @@ let
 in
 {
   home-manager.users.${personal.username} =
-    { pkgs, lib, ... }:
+    {
+      pkgs,
+      lib,
+      config,
+      ...
+    }:
     let
-      upstreamJson = (import upstreamCmux { inherit pkgs lib; }).xdg.configFile."cmux/cmux.json".source;
+      upstreamJson =
+        (import upstreamCmux { inherit pkgs lib config; }).xdg.configFile."cmux/cmux.json".source;
       overridesJson = (pkgs.formats.json { }).generate "cmux-overrides.json" personal.cmux.settings;
     in
     {

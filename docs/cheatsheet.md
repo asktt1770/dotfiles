@@ -373,28 +373,30 @@ cmux の特徴: Claude Code 統合（`claudeCodeIntegration`）、サイドバ�
 
 出典: `agents/skills/`（agent-skills-nix 経由で管理）
 
-| スキル                         | 用途                                |
-| ------------------------------ | ----------------------------------- |
-| `commit`                       | Conventional Commits でコミット作成 |
-| `create-commits-and-push`      | コミット作成 → push                 |
-| `create-pr`                    | ブランチ作成 → コミット → PR作成    |
-| `fix-ci`                       | CI失敗を自動診断・修正              |
-| `merge-main`                   | main ブランチをマージ               |
-| `pr-apply-review`              | PRレビュー指摘を適用                |
-| `session-summary-japanese`     | セッションを日本語で要約            |
-| `done`                         | セッションを閉じてよいか判定        |
-| `ask-coding-cli` / `review`    | 他ベンダーCLIに質問 / レビュー依頼  |
-| `council`                      | 複数視点で議論                      |
-| `focus` / `unfocus`            | cmux でメインタスクを固定・脱線防止 |
-| `cmux-debug`                   | cmux のデバッグ                     |
-| `missing-tools`                | 不足ツールの検出                    |
-| `nix-github-rate-limit`        | Nix の GitHub レート制限対処        |
-| `react-server-components`      | RSC ガイド                          |
-| `tdd`                          | テスト駆動開発                      |
-| `typescript-style`             | TypeScript スタイル                 |
-| `vitest-testing`               | Vitest テスト                       |
-| `you-might-not-need-an-effect` | React useEffect 削減                |
-| `skill-creator`                | 新スキル作成                        |
+| スキル                    | 用途                                |
+| ------------------------- | ----------------------------------- |
+| `commit`                  | Conventional Commits でコミット作成 |
+| `create-pr`               | ブランチ作成 → コミット → PR作成    |
+| `fix-ci`                  | CI失敗を自動診断・修正              |
+| `merge-main`              | main ブランチをマージ               |
+| `address-pr-review`       | PRレビュー指摘を適用                |
+| `japanese-summary`        | セッションを日本語で要約            |
+| `done`                    | セッションを閉じてよいか判定        |
+| `research`                | Codex に調査を委譲して検証          |
+| `ask-other-agent`         | 他ベンダーCLIに質問                 |
+| `cross-model-review`      | 他ベンダーにレビュー依頼            |
+| `worktree`                | git-wt で worktree と PR を管理     |
+| `report-upstream-bug`     | 最小再現を作り upstream に報告      |
+| `focus` / `unfocus`       | cmux でメインタスクを固定・脱線防止 |
+| `cmux-debug`              | cmux のデバッグ                     |
+| `missing-tools`           | 不足ツールの検出                    |
+| `nix-github-rate-limit`   | Nix の GitHub レート制限対処        |
+| `react-server-components` | RSC ガイド                          |
+| `tdd`                     | テスト駆動開発                      |
+| `typescript`              | TypeScript スタイル                 |
+| `vitest`                  | Vitest テスト                       |
+| `useeffect`               | React useEffect 削減                |
+| `edit-skills`             | スキル・共通指示の作成と保守        |
 
 ---
 

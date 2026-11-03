@@ -1,55 +1,44 @@
 ---
 name: t3-delegate
-description: Delegates a task to another provider or model as a T3 Code child task through `delegate_task`. Use inside T3 Code whenever a skill would otherwise shell out to `codex`, `claude -p`, `grok -p`, or `cursor-agent`.
+description: Delegates work to another provider or model as a T3 Code child task. Use inside T3 Code when the user asks to delegate, or instead of shelling out to `codex` or `claude -p`.
 ---
 
 # Delegate inside T3 Code
 
-T3 Code injects the `t3-code` MCP server into every thread it runs, and its
-`t3-code:delegate_task` tool runs another provider as a child thread the user
-can watch. Inside T3, use it instead of the agent CLIs; outside T3, the calling
-skill's CLI path still applies.
+T3 Code injects the `t3-code` MCP server into its threads, and
+`t3-code:delegate_task` runs another provider as a child thread the user can
+watch. The tool descriptions are authoritative; this covers what they leave
+implicit. Tools may be deferred: try the named tool before calling it absent.
+If delegation is unavailable, report that limitation rather than switching
+to a CLI or another provider without the user asking.
 
-If `t3-code:delegate_task` is not listed (it may be deferred or normalised to
-`mcp__t3_code__delegate_task`), call `t3-code:orchestrator_capabilities` once
-before falling back to a CLI.
-
-## Workflow
-
-1. Call `t3-code:orchestrator_capabilities` and take the provider instance and
-   model from its live catalogue, applying the calling skill's model choice.
-   Always pass `target.model`: a provider without one falls back to its first
-   advertised model, not its newest.
-2. Write a self-contained `task`. The child sees none of this conversation, so
-   name the files, the decision at stake, the constraints, and the shape of the
-   answer you want back.
+1. Call `t3-code:orchestrator_capabilities` and take the provider and model from
+   its live catalogue. Always pass `target.model`: without it a provider falls
+   back to its first advertised model, not its newest.
+   Check remaining quota with the `t3-limits` skill before choosing, and route
+   away from a provider near its limit.
+2. Write a self-contained `task`: the child sees none of this conversation, so
+   name the files, the decision at stake, the constraints, and the answer shape.
 3. Call `t3-code:delegate_task`:
-   - `role`: `review`, `research`, `design`, or another fitting role. It only
-     prefixes the prompt.
    - `interactionMode: "plan"` for anything read-only, and say "do not edit
-     files" in the task as well. Drop it only when the user hands the child a
-     change to make.
-   - `runtimeMode`: leave unset. Approval-requiring modes stall the child on a
-     prompt this thread cannot answer.
-   - `isolation`: leave at the default shared checkout when the task concerns
-     uncommitted work; `worktree` starts from the last commit.
-   - `mode`: `"wait"` when the answer gates your next step — a review before a
-     PR, a search digest the current task needs. Otherwise `"async"`: end the
-     turn and let the completion notification wake this thread instead of
-     polling.
-   - `clientRequestId`: a fresh, stable ID per round, so retries do not start
-     duplicate work.
+     files" in the task too.
+   - Check inherited interaction and runtime modes in capabilities. Edit work
+     needs an edit-capable parent; do not escalate permissions to avoid an
+     approval prompt. Runtime approvals may need the user’s intervention.
+   - Select the shared checkout explicitly for uncommitted work; this repo
+     defaults to `worktree`, which starts from the last commit.
+   - `mode: "wait"` when the answer gates your next step; otherwise `"async"`,
+     and let the completion notification wake you instead of polling.
+   - A fresh, stable `clientRequestId` per round, so retries don't duplicate.
 4. For another round, call `delegate_task` again with the original brief, the
-   earlier findings, and your responses. Do not continue through
-   `t3-code:t3_thread_send` on the child thread.
-5. Link the child for the user as `[title](t3-thread://v1/<childThreadId>)`.
+   earlier findings, and your responses — not `t3_thread_send`.
+5. Use the child thread link returned by T3 verbatim.
 
-A `wait` that returns `hasPendingQuestion` needs an answer through
-`t3-code:t3_pending_request_respond` with `threadId` set to the child thread,
-or from the user. A `waitTimedOut` result leaves the child running; read it
-later with `t3-code:task_status`.
+For `hasPendingQuestion`, use `t3-code:t3_pending_request` to read the question
+and respond with `action: "respond"`, its `requestId`, the child’s `threadId`,
+and `answers`, or let the user answer. This cannot approve runtime permissions.
+A `waitTimedOut` child is still running: retain its task ID and follow the
+response’s `next` instruction for completion; do not poll or start a duplicate.
 
-## Reference
-
-The tool descriptions are authoritative. For design background, read
+Design background:
 https://github.com/pingdotgg/t3code/blob/main/docs/orchestration-v2/orchestrator-mcp-server.md
