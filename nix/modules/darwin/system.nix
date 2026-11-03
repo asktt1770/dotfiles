@@ -12,9 +12,6 @@ let
   fishPath = "/run/current-system/sw/bin/fish";
 in
 {
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
   # nix-darwin's HTML manual builder passes `--sidebar-depth` to
   # `nixos-render-docs manual html`, but the current nixpkgs revision ships a
   # `nixos-render-docs` that rejects that flag, so `darwin-manual-html` fails
@@ -262,6 +259,15 @@ in
   # Add fish to system shells
   environment.shells = [ pkgs.fish ];
 
+  # Fish is the login shell, so nothing has set up the Nix environment before
+  # it starts. The nixpkgs fish binary sources nix-darwin's preinit file, which
+  # applies setEnvironment natively; babelfish translates it at build time, so
+  # no bash runs at shell startup.
+  programs.fish = {
+    enable = true;
+    useBabelfish = true;
+  };
+
   # Font configuration
   fonts = {
     packages = with pkgs; [
@@ -286,8 +292,8 @@ in
     };
 
     taps = [
+      "anomalyco/tap"
       "arto-app/tap"
-      "typewhisper/tap"
     ];
 
     brews = [
@@ -297,6 +303,7 @@ in
     casks = [
       "1password"
       "alfred"
+      "anomalyco/tap/hex"
       "arc"
       "arto-app/tap/arto"
       "audacity"
@@ -319,7 +326,6 @@ in
       "raycast"
       "steam"
       "t3-code"
-      "typewhisper/tap/typewhisper"
     ];
 
     masApps = {

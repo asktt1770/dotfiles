@@ -11,7 +11,7 @@ let
 
   settings = {
     defaultModelSelection = {
-      instanceId = "claudeAgent";
+      instanceId = "claudePersonal0";
       model = "claude-opus-5-5";
       options = [
         {
@@ -19,6 +19,10 @@ let
           value = "medium";
         }
       ];
+    };
+    fallbackModelSelection = {
+      instanceId = "claudeAgent";
+      model = "claude-opus-5-5";
     };
     defaultRuntimeMode = "auto";
 
@@ -47,8 +51,7 @@ let
       }
     ];
 
-    autoResumeLimitedThreads = true;
-    snoozeLimitedThreads = true;
+    idleCompaction = "beforeCacheExpires";
 
     # Worktrees always land in ~/.t3/worktrees/<repo>/<branch>; T3 Code has no
     # per-repository location setting.
@@ -56,6 +59,8 @@ let
     branchNamingMode = "semantic";
     branchNamePrefix = "ryoppippi";
     removeAgentCreditsOnMerge = true;
+    defaultAutoPull = true;
+    reviewGuidesEnabled = true;
 
     # `storageCleanup` is the global policy the settings UI edits; a top-level
     # `worktreeCleanup` would override it wholesale, so it is cleared to keep a
@@ -79,6 +84,11 @@ let
     enableAgentDeviceAccess = true;
     cursorKeychainUsageEnabled = true;
 
+    # Labs betas. Each machine keeps its own copy, and linking only works once
+    # both ends have `linkedEnvironmentsEnabled` on.
+    guestSharingEnabled = true;
+    linkedEnvironmentsEnabled = true;
+
     # Pinning store paths stops T3 Code from resolving agents through PATH, where
     # self-updating installs such as ~/.local/bin/cursor-agent would shadow the
     # Nix-managed binaries.
@@ -90,9 +100,9 @@ let
     providerInstances =
       lib.mapAttrs
         (
-          driver: instance:
+          id: instance:
           {
-            inherit driver;
+            driver = id;
             enabled = true;
           }
           // instance
@@ -103,6 +113,14 @@ let
             config = {
               binaryPath = lib.getExe pkgs.claude-code;
               homePath = sessionVariables.CLAUDE_CONFIG_DIR;
+            };
+          };
+          claudePersonal0 = {
+            driver = "claudeAgent";
+            displayName = "Claude (personal 0)";
+            config = {
+              binaryPath = lib.getExe pkgs.claude-code;
+              homePath = "${config.xdg.configHome}/claude-personal-0";
             };
           };
           codex = {
@@ -136,6 +154,8 @@ let
     confirmQuit = "direct";
     notificationMode = "notifications-and-sound";
     inAppNotificationsEnabled = true;
+    sidebarWorkingShelfEnabled = true;
+    boringSidebarMultilineRows = true;
   };
 
   # Only the bindings that differ from T3 Code's defaults. A user rule for a

@@ -4,7 +4,6 @@
   config,
   dotfilesDir,
   helpers,
-  nodePackages ? null,
   fish-na,
   ...
 }:
@@ -81,7 +80,6 @@
         config
         dotfilesDir
         helpers
-        nodePackages
         ;
     })
 
@@ -99,18 +97,13 @@
     })
 
     # cmux terminal configuration
-    (import ./cmux {
-      inherit pkgs lib;
-    })
+    ./cmux
 
     # Bat configuration
     ./bat.nix
 
     # Direnv configuration with nix-direnv
     ./direnv.nix
-
-    # EFM Language Server: config plus the formatters/linters it invokes
-    ./efm-langserver.nix
 
     # jj configuration
     (import ./jj.nix {

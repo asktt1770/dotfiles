@@ -11,7 +11,7 @@ Inside T3 Code, read [references/inside-t3.md](references/inside-t3.md); otherwi
 
 ## Models
 
-- Codex: `luna`. `scripts/codex-model.nu` in the `ask-coding-cli` skill's directory resolves the newest slug of the family, so never pin a version number.
+- Codex: `luna`. `scripts/codex-model.nu` in the `ask-other-agent` skill's directory resolves the newest slug of the family, so never pin a version number.
 
 ## Scope
 

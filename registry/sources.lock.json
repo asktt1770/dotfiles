@@ -75,22 +75,41 @@
 				"versionUpperBound": null
 			},
 			"subdir": "skills"
+		},
+		"t3-limits": {
+			"filter": {
+				"maxDepth": 1,
+				"nameRegex": null
+			},
+			"idPrefix": "t3-limits",
+			"pin": {
+				"at": null,
+				"branch": "main",
+				"owner": "ryoppippi",
+				"preReleases": false,
+				"releasePrefix": null,
+				"repo": "t3-limits",
+				"submodules": false,
+				"type": "github",
+				"versionUpperBound": null
+			},
+			"subdir": "skills"
 		}
 	},
 	"npins": {
 		"pins": {
 			"agent-browser": {
 				"branch": "main",
-				"hash": "sha256-DachbA1H6nDaAt5I8K/6qDdI8ixraY6L7sAG+YkUL7M=",
+				"hash": "sha256-2soHKar4hR2ijiD4pVdSbbnNY6Z/qNmOFfIN4Cpdm4w=",
 				"repository": {
 					"owner": "vercel-labs",
 					"repo": "agent-browser",
 					"type": "GitHub"
 				},
-				"revision": "fd93075e55a21a47fcb36d7433361daa867a0580",
+				"revision": "2d1271baefa026161de333a0da55c0f9e118a07f",
 				"submodules": false,
 				"type": "Git",
-				"url": "https://github.com/vercel-labs/agent-browser/archive/fd93075e55a21a47fcb36d7433361daa867a0580.tar.gz"
+				"url": "https://github.com/vercel-labs/agent-browser/archive/2d1271baefa026161de333a0da55c0f9e118a07f.tar.gz"
 			},
 			"ast-grep": {
 				"branch": "main",
@@ -107,29 +126,42 @@
 			},
 			"cmux": {
 				"branch": "main",
-				"hash": "sha256-B62FCY0JU4LIfsWe8UMHQse5nWiQaDcpXU+p6eRNnmY=",
+				"hash": "sha256-iu63q/AcmWmFYFXMgrfNjg6ASKhzdbMv46JcYqW94Lg=",
 				"repository": {
 					"owner": "manaflow-ai",
 					"repo": "cmux",
 					"type": "GitHub"
 				},
-				"revision": "e9c04cc25750289de1b903b997a232f3eb95607b",
+				"revision": "21dcc2b27b2ed014d723067ed253702e914d97ca",
 				"submodules": false,
 				"type": "Git",
-				"url": "https://github.com/manaflow-ai/cmux/archive/e9c04cc25750289de1b903b997a232f3eb95607b.tar.gz"
+				"url": "https://github.com/manaflow-ai/cmux/archive/21dcc2b27b2ed014d723067ed253702e914d97ca.tar.gz"
 			},
 			"gh-stack": {
 				"branch": "main",
-				"hash": "sha256-Mq4jAqeSHDuCiDYSa40okrq06UhC3dZGjgCXJKMbgzU=",
+				"hash": "sha256-dENuxVuz68Y7P8WW5C7pzVbfJRxGMGIKQ2AnWrTacOs=",
 				"repository": {
 					"owner": "github",
 					"repo": "gh-stack",
 					"type": "GitHub"
 				},
-				"revision": "29a36d314be664583705f18e41cebdf2b61ad514",
+				"revision": "2a49e6751238633db504655d8a8eba3e433e827d",
 				"submodules": false,
 				"type": "Git",
-				"url": "https://github.com/github/gh-stack/archive/29a36d314be664583705f18e41cebdf2b61ad514.tar.gz"
+				"url": "https://github.com/github/gh-stack/archive/2a49e6751238633db504655d8a8eba3e433e827d.tar.gz"
+			},
+			"t3-limits": {
+				"branch": "main",
+				"hash": "sha256-tJ8uCrs/qA4awXlqYYVe8ViywUyEUjnOeYSANjZuGi0=",
+				"repository": {
+					"owner": "ryoppippi",
+					"repo": "t3-limits",
+					"type": "GitHub"
+				},
+				"revision": "3918559d9f7ba8d7caed113482ae7370c6194726",
+				"submodules": false,
+				"type": "Git",
+				"url": "https://github.com/ryoppippi/t3-limits/archive/3918559d9f7ba8d7caed113482ae7370c6194726.tar.gz"
 			}
 		},
 		"version": 8

@@ -16,11 +16,13 @@ Nix flakes only see tracked, staged files, so `git add` is required before
 `switch`. Stage the paths you changed — never `git add -A`, `git add .`, or
 `git add -u`. That staging is a build prerequisite, not a commit plan.
 
+Local changes to `nix/modules/home/programs/codex/default.nix` may contain private repository names; review them before staging or publishing.
+
 ## Layout Notes
 
 - `personal.nix` is the single source of truth for everything fork-specific: username, GitHub ID, extra Homebrew casks and the full masApps list. `nix/flake/constants.nix` reads the username from it and `nix/modules/darwin/personal.nix` applies the Homebrew parts, so no upstream-tracked file needs editing to personalise this checkout.
 - `flake.nix` holds only inputs; the outputs live in `nix/flake/` as flake-parts modules (`constants.nix`, `hosts/`, `apps/`, `formatter.nix`).
-- `agents/AGENTS.md` is the single global instruction file for every agent; its sections live in `agents/shared/`. Claude Code reads it as `~/.config/claude/CLAUDE.md` (user-scope memory is only read under that name) and resolves the `@` imports; Codex gets the same file with the fragments concatenated at switch time.
+- `agents/AGENTS.md` is the single global instruction file for every agent; its sections live in `agents/shared/`. Claude Code reads it as `~/.config/claude/CLAUDE.md` (user-scope memory is only read under that name) and resolves the `@` imports; Codex gets the same file with the fragments concatenated at switch time. Skills live in `agents/skills/`. Use the `edit-skills` skill before editing any of them.
 - The root `CLAUDE.md` is a symlink to this file. Upstream dropped its copy and relies on the built-in [`agents-md`](https://github.com/anthropics/claude-code/tree/main/mods/agents-md) plugin to load `AGENTS.md` as project instructions; the symlink keeps the instructions loading here without depending on that plugin being enabled.
 - `claude/` is symlinked to `~/.config/claude`, so edits there apply to the running Claude Code without a switch.
 - `.claude/` is fork-only: the worktree-enforcing and upstream-write-blocking hooks, their tests, and `settings.json` that wires them up.
@@ -61,7 +63,6 @@ files. Nothing in `.github/workflows/` reflects this, so check with
 | `update-flake.yaml`          | `disabled_manually` |
 | `auto-rebase.yaml`           | `disabled_manually` |
 | `update-overlays.yaml`       | `disabled_manually` |
-| `update-node-packages.yaml`  | `disabled_manually` |
 | `update-skill-sources.yaml`  | `disabled_manually` |
 | `update-nvim-plugins.yaml`   | `disabled_manually` |
 
@@ -78,9 +79,9 @@ on demand. Only `gh-graph` is fork-only and therefore never updated by upstream.
 
 Reviving them needs three things: a GitHub App with its secrets set on this
 fork, `gh workflow enable`, and a fix for the hardcoded
-`darwinConfigurations.ryoppippi` build target in `update-overlays.yaml` and
-`update-node-packages.yaml` — `nix/flake/hosts/darwin.nix` defines
-`darwinConfigurations.${username}`, whose value comes from `personal.nix`.
+`darwinConfigurations.ryoppippi` build target in `update-overlays.yaml` —
+`nix/flake/hosts/darwin.nix` defines `darwinConfigurations.${username}`, whose
+value comes from `personal.nix`.
 
 Note that upstream renaming or adding a workflow file resurfaces it as a new,
 active workflow — re-check `gh workflow list --all` after a large sync.
@@ -104,36 +105,6 @@ inside a dedicated git worktree — never edit files directly on `main`.
   worktree directory. Only one branch's config can be live at a time.
 - **Finishing**: push → PR → CI → review → squash merge. Call `ExitWorktree`
   only when the user asks.
-
-## External Skills (agent-skills-nix)
-
-Skills are managed via [agent-skills-nix](https://github.com/Kyure-A/agent-skills-nix) in `nix/modules/home/agent-skills.nix`. External skill repositories are pinned in `registry/sources/`, not as flake inputs. Local skills live in `agents/skills/` and are enabled automatically — see the `skill-creator` skill.
-
-### Adding a new external skill
-
-1. Add a pin manifest `registry/sources/my-skill.nix`:
-   ```nix
-   {
-     pin = {
-       type = "github";
-       owner = "owner";
-       repo = "repo";
-       branch = "main";
-     };
-
-     subdir = "path/to/skills";
-     idPrefix = "my-skill";
-     filter.maxDepth = 1;
-   }
-   ```
-2. Resolve the pin: `nix run .#skills-sources-lock`
-3. Select the skill in `agent-skills.nix` — `skills.explicit.<id>` when it needs
-   `packages` or a `transform`, otherwise add its prefixed catalog ID to
-   `skills.enable`
-4. Run `git add registry/ nix/modules/home/agent-skills.nix && nix run .#switch`
-
-Updating external skills is the same lock-then-switch pair. Editing a manifest
-without regenerating the lock fails evaluation, so the two always stay in sync.
 
 ## System Info
 

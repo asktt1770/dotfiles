@@ -5,24 +5,8 @@
       url = "github:folke/lazy.nvim/85c7ff3711b730b4030d03144f6db6375044ae82";
       flake = false;
     };
-    actions-preview-nvim = {
-      url = "github:aznhe21/actions-preview.nvim/0ac9c2aa3cfc8c885321c0862b50b6b1c3392405";
-      flake = false;
-    };
-    blink-cmp-git = {
-      url = "github:Kaiser-Yang/blink-cmp-git/d3f2a9067ab028e779d08e61bf0b054939011316";
-      flake = false;
-    };
-    blink-cmp-spell = {
-      url = "github:ribru17/blink-cmp-spell/2bd0e0d5e7735c047e72b6918a0458f3e8fadaba";
-      flake = false;
-    };
-    blink-emoji-nvim = {
-      url = "github:moyiz/blink-emoji.nvim/dff709139ad5389fb55ebab026e75278a12b325a";
-      flake = false;
-    };
     blink-cmp = {
-      url = "github:saghen/blink.cmp/78336bc89ee5365633bcf754d93df01678b5c08f";
+      url = "github:saghen/blink.cmp/refs/tags/v1.10.2";
       flake = false;
     };
     bufresize-nvim = {
@@ -41,16 +25,8 @@
       url = "github:nvim-zh/colorful-winsep.nvim/6134b5cd4a38990c7b720adc90973ed32f726179";
       flake = false;
     };
-    copilot-lua = {
-      url = "github:zbirenbaum/copilot.lua/f76a0a281de089e27b605ec8017093f1aab73b07";
-      flake = false;
-    };
     crates-nvim = {
       url = "github:saecki/crates.nvim/7039bc1d130e424232a7aa64ceddb170a154ff5b";
-      flake = false;
-    };
-    dial-nvim = {
-      url = "github:monaqa/dial.nvim/f2634758455cfa52a8acea6f142dcd6271a1bf57";
       flake = false;
     };
     dropbar-nvim = {
@@ -85,10 +61,6 @@
       url = "github:lewis6991/gitsigns.nvim/a462f416e2ce4744531c6256252dee99a7d34a83";
       flake = false;
     };
-    glance-nvim = {
-      url = "github:dnlhc/glance.nvim/5a8eab1c1c48bfa19a33b556328a3c553138366e";
-      flake = false;
-    };
     guess-indent-nvim = {
       url = "github:NMAC427/guess-indent.nvim/84a4987ff36798c2fc1169cbaff67960aed9776f";
       flake = false;
@@ -97,16 +69,8 @@
       url = "github:tzachar/highlight-undo.nvim/ee32e12693d70e66f954d09a504a7371d110fc27";
       flake = false;
     };
-    inc-rename-nvim = {
-      url = "github:smjonas/inc-rename.nvim/ddff8bd3eccedf043bd73f5bf89cf90d2d6d8105";
-      flake = false;
-    };
     kanagawa-nvim = {
       url = "github:rebelot/kanagawa.nvim/8ad3b4cdcc804b332c32db8f9743667e1bb82b99";
-      flake = false;
-    };
-    lsp-format-nvim = {
-      url = "github:lukas-reineke/lsp-format.nvim/e2b4ae87545c1aadebcf1dfc1b5dffe28dcf2ffb";
       flake = false;
     };
     marks-nvim = {
@@ -129,22 +93,6 @@
       url = "github:echasnovski/mini.jump/99799e8ca33fe936b81a70b5ab9a081f8794c8a1";
       flake = false;
     };
-    mini-move = {
-      url = "github:echasnovski/mini.move/4d214202d71e0a4066b6288176bbe88f268f9777";
-      flake = false;
-    };
-    mini-splitjoin = {
-      url = "github:echasnovski/mini.splitjoin/9fcd8856efb95a505090c3225726466494076127";
-      flake = false;
-    };
-    mini-surround = {
-      url = "github:echasnovski/mini.surround/88c52297ed3e69ecf9f8652837888ecc727a28ee";
-      flake = false;
-    };
-    mini-trailspace = {
-      url = "github:echasnovski/mini.trailspace/f8083ca969e1b2098480c10f3c3c4d2ce3586680";
-      flake = false;
-    };
     modes-nvim = {
       url = "github:mvllow/modes.nvim/2badf8771dbb2d1e1066fd6a5dddaad2fc836e72";
       flake = false;
@@ -154,7 +102,7 @@
       flake = false;
     };
     moonbit-nvim = {
-      url = "github:moonbit-community/moonbit.nvim/907c8240d3d2f96fa8e8569c73973e8604a7b1e6";
+      url = "github:moonbit-community/moonbit.nvim";
       flake = false;
     };
     noice-nvim = {
@@ -163,10 +111,6 @@
     };
     nui-nvim = {
       url = "github:MunifTanjim/nui.nvim/f535005e6ad1016383f24e39559833759453564e";
-      flake = false;
-    };
-    nvim-FeMaco-lua = {
-      url = "github:AckslD/nvim-FeMaco.lua/96bbf843595dbe865838b3f2484b73557f34700c";
       flake = false;
     };
     nvim-bqf = {
@@ -181,24 +125,8 @@
       url = "github:brenoprata10/nvim-highlight-colors/e4c7af0211866162d999ce0bdd6a029302e19139";
       flake = false;
     };
-    nvim-insx = {
-      url = "github:hrsh7th/nvim-insx/fbba86031f3927ecbc11556217b4976a149c29c6";
-      flake = false;
-    };
-    nvim-lightbulb = {
-      url = "github:kosayoda/nvim-lightbulb/b8c08c5f3b1586dfcdd9f34d7d54fe6982e01ac9";
-      flake = false;
-    };
-    nvim-lspconfig = {
-      url = "github:neovim/nvim-lspconfig/4d363f93c3581b9212a24f7a830d7590b3f050af";
-      flake = false;
-    };
     nvim-treesitter = {
       url = "github:nvim-treesitter/nvim-treesitter/f603a2f4da48728f80257fb5fbb90145fd1dc173";
-      flake = false;
-    };
-    nvim-treesitter-clipping = {
-      url = "github:monaqa/nvim-treesitter-clipping/fa7c052cfcafa73099dbf2c1697dc56557dbde9f";
       flake = false;
     };
     nvim-treesitter-context = {
@@ -207,14 +135,6 @@
     };
     nvim-treesitter-textobjects = {
       url = "github:nvim-treesitter/nvim-treesitter-textobjects/5c7b0263797dfd1bd6202f2b219f3b53a80b2187";
-      flake = false;
-    };
-    nvim-ts-autotag = {
-      url = "github:windwp/nvim-ts-autotag/88c1453db4ba7dd24131086fe51fdf74e587d275";
-      flake = false;
-    };
-    nvim-ts-context-commentstring = {
-      url = "github:JoosepAlviste/nvim-ts-context-commentstring/6141a40173c6efa98242dc951ed4b6f892c97027";
       flake = false;
     };
     octo-nvim = {
@@ -249,44 +169,20 @@
       url = "github:stevearc/quicker.nvim/4a6883cb13fe097a20a046eb55f6dffd239276e3";
       flake = false;
     };
-    rustaceanvim = {
-      url = "github:mrcjkb/rustaceanvim/e9c5aaba16fead831379d5f44617547a90b913c7";
-      flake = false;
-    };
     satellite-nvim = {
       url = "github:lewis6991/satellite.nvim/87843c9c8f28b54332497302de380a6d94c9e82b";
-      flake = false;
-    };
-    schemastore-nvim = {
-      url = "github:b0o/schemastore.nvim/12dd0de1f15d598db2cc0d075f4f0d13a3290d4d";
       flake = false;
     };
     snacks-nvim = {
       url = "github:folke/snacks.nvim/882c996cf28183f4d63640de0b4c02ec886d01f2";
       flake = false;
     };
-    sort-nvim = {
-      url = "github:sQVe/sort.nvim/fa6318fc6676294bff0fd56ae8e8f9552be1ac7e";
-      flake = false;
-    };
     stickybuf-nvim = {
       url = "github:stevearc/stickybuf.nvim/0c1e5f1a3eb36eea2cea57083828269cc62c58e4";
       flake = false;
     };
-    substitute-nvim = {
-      url = "github:gbprod/substitute.nvim/0d2077398552f069abccbd964a26dd7cd26882cd";
-      flake = false;
-    };
     term-edit-nvim = {
       url = "github:chomosuke/term-edit.nvim/b190a91178ef98beefac2ec0823db047978ea327";
-      flake = false;
-    };
-    troublesum-nvim = {
-      url = "github:ivanjermakov/troublesum.nvim/b00301bb565bfcb6fcfa41f2012e43a0528da65b";
-      flake = false;
-    };
-    ts-error-translator-nvim = {
-      url = "github:dmmulroy/ts-error-translator.nvim/558abff11b9e8f4cefc0de09df780c56841c7a4b";
       flake = false;
     };
     vim-asterisk = {
@@ -301,20 +197,8 @@
       url = "github:andymass/vim-matchup/0106b1afd4a2f7e1098037b5ceb161bab7471088";
       flake = false;
     };
-    vim-partedit = {
-      url = "github:thinca/vim-partedit/a4ed06ff7759343d205b4a5be08a5bb49ee878c3";
-      flake = false;
-    };
     vim-repeat = {
       url = "github:tpope/vim-repeat/65846025c15494983dafe5e3b46c8f88ab2e9635";
-      flake = false;
-    };
-    vim-sonictemplate = {
-      url = "github:mattn/vim-sonictemplate/050450414ca69885df7c26936821d74678ff4904";
-      flake = false;
-    };
-    vim-table-mode = {
-      url = "github:dhruvasagar/vim-table-mode/bb025308a45c67c7c8f0763ba37bc2ee3f534df0";
       flake = false;
     };
     vim-textobj-blockwise = {

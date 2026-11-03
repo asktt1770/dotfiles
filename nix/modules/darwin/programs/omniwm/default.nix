@@ -60,9 +60,9 @@ in
 
       niri = {
         centerFocusedColumn = "onOverflow";
-        # The extra 0.25 preset is the width the chat applications start at.
+        # The extra 0.2 preset is the width the chat applications start at.
         containerPrimarySpanPresets = [
-          0.25
+          0.2
           0.3333333333333333
           0.5
           0.6666666666666666
@@ -150,7 +150,7 @@ in
           minWidth = 800.0;
         })
         (omniwmLib.appRule "com.hnc.Discord" {
-          initialContainerPrimarySpan = 0.25;
+          initialContainerPrimarySpan = 0.2;
           minHeight = 200.0;
           minWidth = 320.0;
         })
@@ -166,6 +166,10 @@ in
         (omniwmLib.appRule "jp.naver.line.mac" narrowCompanion)
         (omniwmLib.appRule "com.tinyspeck.slackmacgap" (narrowCompanion // { minHeight = 600.0; }))
         (omniwmLib.appRule "com.apple.Dictionary" narrowCompanion)
+        (omniwmLib.appRule "com.apple.finder" { layout = "float"; })
+        (omniwmLib.appRule "anomaly.hex" { layout = "float"; })
+        (omniwmLib.appRule "com.1password.1password" { layout = "float"; })
+        (omniwmLib.appRule "com.apple.Passwords" { layout = "float"; })
       ];
 
       # Everything within one workspace lives on Hyper. Everything that crosses
@@ -186,11 +190,11 @@ in
         "moveWindowDown" = "Hyper+Down Arrow";
         "moveWindowUp" = "Hyper+Up Arrow";
 
-        # Stepping through the span presets lands on exact widths such as 25%
-        # and 50%, which 10% steps from a third never reach. The 10% steps are
+        # Hyper+Y/O halve and double the column width through omniwm-span in
+        # karabiner.ts, since the preset cycle wraps round. The 10% steps are
         # unassigned so their Option+Minus/Equal defaults stay typeable.
-        "cycleSizeBackward" = "Hyper+Y";
-        "cycleSizeForward" = "Hyper+O";
+        "cycleSizeBackward" = "Unassigned";
+        "cycleSizeForward" = "Unassigned";
         "setContainerPrimarySpan.decrease10Percent" = "Unassigned";
         "setContainerPrimarySpan.increase10Percent" = "Unassigned";
         "setWindowSecondarySpan.decrease10Percent" = "Hyper+U";
