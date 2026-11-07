@@ -6,10 +6,12 @@
     $ours
     | with_entries(
         .key as $event
-        # Keep other tools' hooks for this event, and drop this tool's entries
-        # because they may name an older store path.
+        # Keep other tools' hooks for this event, and drop this tool's commands
+        # because they may name an older store path. A group is dropped only
+        # when nothing else is left in it.
         | .value = ((($settings.hooks[$event] // [])
-            | map(select(any(.hooks[]?; (.command // "") | contains("claude-session-status")) | not)))
+            | map(.hooks |= map(select((.command // "") | contains("claude-session-status") | not)))
+            | map(select(.hooks | length > 0)))
           + .value)
       )
   ))

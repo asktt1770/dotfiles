@@ -15,8 +15,9 @@ const VERDICTS = {
 
 const GIT_COLOR = '#E67E22'
 
-# `claude_code` holds this label while a Claude Code session waits for input.
-const IDLE_STATE = '待機中'
+# `claude_code` holds one of these labels while a Claude Code session waits for
+# input. Sessions started under different locales report different labels.
+const IDLE_STATES = ['待機中' 'Idle']
 
 # Other sessions commit here too, so its state says nothing about this session.
 const SHARED_BRANCHES = [main master]
@@ -134,9 +135,10 @@ def "main refresh" []: nothing -> nothing {
     }
 }
 
-# Print every other workspace in the caller's window as JSON. `surface` is set
-# only when one terminal is there, because with several there is no telling
-# which one holds the session, and `/done` sent to a shell would run as a command.
+# Print every other workspace in the caller's window as JSON. `verdict` and
+# `surface` are set only when one terminal is there, because with several there
+# is no telling which session the verdict covers or which one would receive
+# `/done`, and `/done` sent to a shell would run as a command.
 def "main sweep" []: nothing -> nothing {
     if not (in-cmux) {
         error make {msg: 'Not inside cmux ($CMUX_WORKSPACE_ID is unset): there are no workspaces to sweep.'}
@@ -156,14 +158,15 @@ def "main sweep" []: nothing -> nothing {
         | flatten
         | where type == 'terminal'
         let state = $status | get -o claude_code
+        let single = ($terminals | length) == 1
 
         {
             ref: $ws.ref
             title: $ws.title
             state: $state
-            verdict: ($status | get -o $VERDICT_KEY), 
+            verdict: (if $single { $status | get -o $VERDICT_KEY }), 
             git: ($status | get -o $GIT_KEY), 
-            surface: (if $state == $IDLE_STATE and ($terminals | length) == 1 { $terminals.0.ref })
+            surface: (if $single and $state in $IDLE_STATES { $terminals.0.ref })
         }
     }
     | to json

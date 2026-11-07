@@ -62,9 +62,11 @@ does not reload the summarised messages either.
 
 ## 4. Finish
 
-Show the verdict in the cmux sidebar with `claude-session-status verdict ok` for
-`消してOK` or `claude-session-status verdict remaining` for `残あり`. The next
-prompt clears it, because that prompt can change the answer.
+In Claude Code, show the verdict in the cmux sidebar with
+`claude-session-status verdict ok` for `消してOK` or
+`claude-session-status verdict remaining` for `残あり`. The next prompt clears it,
+because that prompt can change the answer. Skip this in other agents: they have
+no hook to clear it, so a stale `消してOK` would stay.
 
 - **`消してOK`:** end with `/exit で終了してください`. Do not end the session yourself.
 - **`残あり`:** propose where each leftover should go: the PR body for this PR's context, a GitHub issue for separate work. Move it only after the user agrees, then run steps 2 and 3 again.

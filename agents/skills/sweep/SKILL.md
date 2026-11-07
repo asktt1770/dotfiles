@@ -17,7 +17,9 @@ claude-session-status sweep
 ```
 
 It prints each other workspace as JSON: `ref`, `title`, `state`, `verdict`, `git`,
-and `surface`. Other windows are not covered, so say so if the user has any.
+and `surface`. A workspace with several terminals gets neither `verdict` nor
+`surface`, because the verdict could belong to any of them. Other windows are not
+covered, so say so if the user has any.
 
 ## 2. Report
 
