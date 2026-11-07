@@ -383,6 +383,7 @@ cmux の特徴: Claude Code 統合（`claudeCodeIntegration`）、サイドバ�
 | `pr-apply-review`              | PRレビュー指摘を適用                |
 | `session-summary-japanese`     | セッションを日本語で要約            |
 | `done`                         | セッションを閉じてよいか判定        |
+| `sweep`                        | 全セッションを棚卸し                |
 | `ask-coding-cli` / `review`    | 他ベンダーCLIに質問 / レビュー依頼  |
 | `council`                      | 複数視点で議論                      |
 | `focus` / `unfocus`            | cmux でメインタスクを固定・脱線防止 |
