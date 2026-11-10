@@ -23,6 +23,7 @@ let
     ../../../../../agents/shared/git-staging.md
     ../../../../../agents/shared/git-worktrees.md
     ../../../../../agents/shared/delegate-work.md
+    ../../../../../agents/shared/issue-queue.md
     ../../../../../agents/shared/browser.md
   ];
 

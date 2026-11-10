@@ -25,4 +25,6 @@ fragments concatenated in at switch time.
 
 @~/.config/claude/shared/delegate-work.md
 
+@~/.config/claude/shared/issue-queue.md
+
 @~/.config/claude/shared/browser.md
