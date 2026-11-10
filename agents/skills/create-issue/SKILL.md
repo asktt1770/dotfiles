@@ -28,7 +28,7 @@ An approach the assistant suggested and the user did not confirm is not stated, 
 
 ## Body
 
-Write in English. Keep secrets, customer details, and private repository names out, because the issue may be public. Omit sections that do not apply, and use `Decision` for `agent:ready`, `Question` for `agent:investigate`.
+Write in the language the target repository's existing issues use, or its README when it has none, because the people reading the queue work in that language. Keep section headings, field names, commands, and paths exactly as in the example, because the queue rules look them up. Keep secrets, customer details, and private repository names out, because the issue may be public. Omit sections that do not apply, and use `Decision` for `agent:ready`, `Question` for `agent:investigate`.
 
 ```markdown
 ## Context
