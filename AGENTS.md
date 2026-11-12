@@ -95,8 +95,8 @@ inside a dedicated git worktree — never edit files directly on `main`.
   edits, so nothing lands on `main` by accident.
 - **Consultation / research only**: stay on `main`; no worktree needed.
 - **Parallel task found mid-work**: capture it as a GitHub issue
-  (`gh issue create`) from the current session — do not start coding it on the
-  current branch. Handle it in a separate worktree/session.
+  (the `create-issue` skill) from the current session — do not start coding it
+  on the current branch. Handle it in a separate worktree/session.
 - **Building**: the flake only sees git-tracked files, so stage the paths you
   changed before `nix run .#build` / `nix flake check`. The
   `Git tree ... is dirty` warning is expected, not an error.

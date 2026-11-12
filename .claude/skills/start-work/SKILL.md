@@ -30,7 +30,7 @@ Set up isolated implementation work in this dotfiles repo so nothing lands on
   expected, not an error.
 - `nix run .#switch` is the user's job (needs sudo); only one branch's config
   can be live at a time.
-- If a separate task surfaces mid-work, capture it with `gh issue create` — do
+- If a separate task surfaces mid-work, capture it with the `create-issue` skill — do
   not start coding it on the current branch.
 - Finish with: push → PR → CI → review → squash merge. Call `ExitWorktree`
   (`remove`) only when the user asks; after a squash merge it asks to confirm
